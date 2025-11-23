@@ -9,7 +9,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../code'))
+sys.path.insert(0, os.path.abspath('../src'))
 
 project = 'HAR-CAESar'
 copyright = '2025, Federico Gatta & Charles Shaw'

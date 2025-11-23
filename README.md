@@ -1,85 +1,88 @@
-# HAR-CAESar: Heterogeneous Autoregressive Extension for CAESar
+# HAR-CAESar
 
-This repository contains the code and results for the MSc Thesis **"Forecasting Tail Risk with Long-Memory: A Heterogeneous Extension of the CAESar Model"**.
+[\![Tests](https://github.com/shawcharles/HAR-CAESar/actions/workflows/tests.yml/badge.svg)](https://github.com/shawcharles/HAR-CAESar/actions/workflows/tests.yml)
+[\![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[\![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
-It extends the original **CAESar** (Conditional Autoregressive Expected Shortfall) framework proposed by Gatta, Lillo, and Mazzarisi (2024) by incorporating **Heterogeneous Autoregressive (HAR)** volatility components (Corsi, 2009) to capture long-memory dynamics in tail risk forecasting.
+**HAR-CAESar** (Heterogeneous Autoregressive Conditional Autoregressive Expected Shortfall) is a Python library for joint forecasting of Value at Risk (VaR) and Expected Shortfall (ES). The full thesis is available [here](docs/thesis.pdf).
 
-## Project Overview
+Developed for the MSc Thesis **"Forecasting Tail Risk with Long-Memory"**, this model extends the CAESar framework by incorporating heterogeneous volatility components (daily, weekly, monthly) to better capture long-memory dynamics in financial tail risk.
 
-The core contribution is the implementation of the `HAR_CAESar` class, which modifies the original autoregressive dynamics to condition on daily, weekly, and monthly aggregated returns.
+## Key Features
 
-*   **Original CAESar:** Conditions on $r_{t-1}$, $\text{VaR}_{t-1}$, $\text{ES}_{t-1}$.
-*   **HAR-CAESar:** Conditions on $r_{t-1}^{(d)}$, $r_{t-1}^{(w)}$, $r_{t-1}^{(m)}$, $\text{VaR}_{t-1}$, $\text{ES}_{t-1}$.
+-   **Long-Memory Modeling**: Captures volatility cascades using HAR dynamics (Corsi, 2009).
+-   **Joint Estimation**: Simultaneous estimation of VaR and ES using the Fissler-Ziegel consistent loss function.
+-   **Production Ready**: Fully typed, tested, and structured as a standard Python package.
+-   **Benchmarks**: Includes implementations of standard CAESar, CAViaR, and GAS models for comparison.
 
-## Repository Structure
+## Model Specification
 
-*   **code/models/**
-    *   `caesar.py`: Original CAESar implementation (Gatta et al., 2024).
-    *   `har_caesar.py`: **NEW** HAR-CAESar implementation.
-    *   `gas.py`: Generalised Autoregressive Score models (Patton et al., 2019).
-    *   `caviar.py`: CAViaR implementation (Engle & Manganelli, 2004).
-*   **code/experiments/**
-    *   `har_experiment.py`: Main script for running the rolling-window comparison.
-*   **output/har_experiment/**
-    *   Contains the `.pickle` files with the results of the empirical analysis (S&P 500, FTSE 100, Nikkei 225, MSCI EM).
+The HAR-CAESar model modifies the autoregressive structure of tail risk to condition on multi-horizon returns:
 
-## Getting Started
+1857694
+\text{VaR}_t = \beta_0 + \beta_d r_{t-1}^{(d)} + \beta_w r_{t-1}^{(w)} + \beta_m r_{t-1}^{(m)} + \beta_q \text{VaR}_{t-1} + \beta_e \text{ES}_{t-1}
+1857694
 
-### Prerequisites
-Create the conda environment using the provided file:
+Where $r^{(d)}$, $r^{(w)}$, and $r^{(m)}$ represent daily, weekly, and monthly aggregated return components, allowing the model to adapt to different frequency information flows.
+
+## Installation
 
 ```bash
-conda env create -f CAESar_env.yml
-conda activate CAESar
+git clone https://github.com/shawcharles/HAR-CAESar.git
+cd HAR-CAESar
+pip install -e .
 ```
 
-### Running the HAR-CAESar Model
+## Quick Start
 
-The syntax for `HAR_CAESar` follows the same API as the original model.
+Run the full experimental pipeline to reproduce thesis results:
+
+```bash
+python experiments/experiments_har_caesar.py
+```
+
+Results will be saved to `output/har_experiment/`.
+
+## Usage Example
 
 ```python
 import numpy as np
-from models.har_caesar import HAR_CAESar
+from har_caesar import HAR_CAESar
 
-# Example Data
-y = np.random.normal(0, 1, 1000) # Log-returns
-tv = 800 # Train/Test split point
-theta = 0.025 # Probability level
+# 1. Generate synthetic data
+y = np.random.normal(0, 1, 2000)
+theta = 0.025  # 2.5% tail probability
 
-# Initialize and Fit
-mdl = HAR_CAESar(theta, 'AS') # 'AS' = Asymmetric Slope
-res = mdl.fit_predict(y, tv, seed=42)
+# 2. Initialize model
+model = HAR_CAESar(theta=theta)
 
-# Access Results
-print("VaR Forecasts:", res['qf'])
-print("ES Forecasts:", res['ef'])
+# 3. Fit and Predict
+# Split at index 1500: fit on [0:1500], predict on [1500:end]
+results = model.fit_predict(y, ti=1500, seed=42)
+
+# 4. Analyze Results
+print(f"Mean VaR Forecast: {np.mean(results['qf']):.4f}")
+print(f"Mean ES Forecast:  {np.mean(results['ef']):.4f}")
 ```
 
-### Reproducing Thesis Results
+## Repository Structure
 
-To reproduce the empirical analysis presented in the thesis:
+-   `src/har_caesar/`: Main package source code.
+-   `experiments/`: Reproducible scripts for empirical analysis.
+-   `tests/`: Unit tests for model verification.
+-   `data/`: Input dataset location.
+-   `output/`: Generated results and artifacts.
 
-1.  Navigate to the code directory:
-    ```bash
-    cd code
-    ```
-2.  Run the HAR experiment script:
-    ```bash
-    python har_experiment.py
-    ```
-    This will generate the results in `output/har_experiment/`.
+## License
 
-3.  Analyze the results (Backtests & Loss Functions):
-    ```bash
-    python analyze_har_results.py
-    ```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## References
+## Citation
 
-*   **Original CAESar Paper:** Gatta, F., Lillo, F., & Mazzarisi, P. (2024). CAESar: Conditional Autoregressive Expected Shortfall. *arXiv preprint arXiv:2407.06619*.
-*   **HAR Model:** Corsi, F. (2009). A Simple Approximate Long-Memory Model of Realized Volatility. *Journal of Financial Econometrics*.
-*   **Thesis:** *Forecasting Tail Risk with Long-Memory: A Heterogeneous Extension of the CAESar Model* (2025).
+If you use this software in your research, please cite the thesis:
+
+> Shaw, C. (2025). *Forecasting Tail Risk with Long-Memory: A Heterogeneous Extension of the CAESar Model* (MSc Thesis).
 
 ## Acknowledgments
 
-This code is based on the original implementation by [Federico Gatta](https://github.com/fgt996/CAESar).
+This work builds upon the original CAESar implementation by [Federico Gatta](https://github.com/fgt996/CAESar).

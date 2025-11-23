@@ -4,66 +4,66 @@ models package
 Submodules
 ----------
 
-models.bcgns module
+har_caesar.models.bcgns module
 -------------------
 
-.. automodule:: models.bcgns
+.. automodule:: har_caesar.models.bcgns
    :members:
    :undoc-members:
    :show-inheritance:
 
-models.caesar module
+har_caesar.models.caesar module
 --------------------
 
-.. automodule:: models.caesar
+.. automodule:: har_caesar.models.caesar
    :members:
    :undoc-members:
    :show-inheritance:
 
-models.har_caesar module
+har_caesar.models.har_caesar module
 ------------------------
 
-.. automodule:: models.har_caesar
+.. automodule:: har_caesar.models.har_caesar
    :members:
    :undoc-members:
    :show-inheritance:
 
-models.caviar module
+har_caesar.models.caviar module
 --------------------
 
-.. automodule:: models.caviar
+.. automodule:: har_caesar.models.caviar
    :members:
    :undoc-members:
    :show-inheritance:
 
-models.gas module
+har_caesar.models.gas module
 -----------------
 
-.. automodule:: models.gas
+.. automodule:: har_caesar.models.gas
    :members:
    :undoc-members:
    :show-inheritance:
 
-models.kcaviar module
+har_caesar.models.kcaviar module
 ---------------------
 
-.. automodule:: models.kcaviar
+.. automodule:: har_caesar.models.kcaviar
    :members:
    :undoc-members:
    :show-inheritance:
 
-models.kqrnn module
+har_caesar.models.kqrnn module
 -------------------
 
-.. automodule:: models.kqrnn
+.. automodule:: har_caesar.models.kqrnn
    :members:
    :undoc-members:
    :show-inheritance:
 
-models.special module
+har_caesar.models.special module
 ---------------------
 
-.. automodule:: models.special
+.. automodule:: har_caesar.models.special
    :members:
    :undoc-members:
    :show-inheritance:
@@ -71,7 +71,7 @@ models.special module
 Module contents
 ---------------
 
-.. automodule:: models
+.. automodule:: har_caesar.models
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Shaw"
+  given-names: "Charles"
+title: "HAR-CAESar: Heterogeneous Autoregressive Extension for CAESar"
+version: 0.1.0
+date-released: 2025-11-23
+url: "https://github.com/shawcharles/HAR-CAESar"
+preferred-citation:
+  type: thesis
+  authors:
+  - family-names: "Shaw"
+    given-names: "Charles"
+  title: "Forecasting Tail Risk with Long-Memory: A Heterogeneous Extension of the CAESar Model"
+  year: 2025
+  thesis-type: "MSc Thesis"

@@ -1,7 +1,7 @@
 utils module
 ============
 
-.. automodule:: utils
+.. automodule:: har_caesar.utils
    :members:
    :undoc-members:
    :special-members: __call__

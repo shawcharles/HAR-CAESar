@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "har_caesar"
+version = "0.1.0"
+description = "Forecasting Tail Risk with Long-Memory: A Heterogeneous Extension of the CAESar Model"
+authors = [
+  { name="MSc Thesis Author", email="shawcharles@example.com" },
+]
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "tqdm",
+    "matplotlib",
+    "seaborn",
+    "statsmodels",
+    "scikit-learn",
+    "arch",
+    "torch", 
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "sphinx",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
