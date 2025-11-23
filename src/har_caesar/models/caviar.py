@@ -145,24 +145,28 @@ class CAViaR_base():
             return {'qf':qf, 'beta':self.beta} #Return prediction
 
 class CAViaR_general(CAViaR_base):
-    '''
-    CAViaR regression for quantile estimation.
-    '''
+    """
+    CAViaR (Conditional Autoregressive Value at Risk) model for quantile estimation.
+
+    Implements the CAViaR model (Engle & Manganelli, 2004) with flexible lag structure
+    and multiple specifications (SAV, AS, GARCH).
+
+    Args:
+        theta (float): Quantile level (e.g., 0.025 for 2.5% VaR).
+        spec (str, optional): Model specification - 'SAV', 'AS', or 'GARCH'. Default is 'AS'.
+        p (int, optional): Number of return lags. Default is 1.
+        u (int, optional): Number of VaR lags. Default is 1.
+    """
     def __init__(self, theta, spec='AS', p=1, u=1):
-        '''
-        Initialization of the general CAViaR model.
-        INPUTS:
-            - theta: float
-                quantile level.
-            - spec: str, optional
-                specification of the model (SAV, AS, GARCH). Default is AS.
-            - p: int, optional
-                number of y_t lags for the model. Default is 1.
-            - u: int, optional
-                number of ^q_t lags for the model. Default is 1.
-        OUTPUTS:
-            - None
-        '''
+        """
+        Initialize the CAViaR model.
+
+        Args:
+            theta (float): Quantile level.
+            spec (str, optional): Model specification - 'SAV', 'AS', or 'GARCH'. Default is 'AS'.
+            p (int, optional): Number of return lags. Default is 1.
+            u (int, optional): Number of VaR lags. Default is 1.
+        """
         self.theta = theta #Initialize theta
 
         # Initialize p and u

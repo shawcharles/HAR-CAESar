@@ -19,6 +19,7 @@ This library implements the models developed for the MSc Thesis: *"Forecasting T
 Indices and tables
 ==================
 
-* :ref:
-* :ref:
-* :ref:
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+

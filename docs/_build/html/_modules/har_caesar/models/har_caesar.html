@@ -91,29 +91,24 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 
-<div class="viewcode-block" id="compute_har_features">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.har_caesar.compute_har_features">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_har_features</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">weekly_window</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">monthly_window</span><span class="o">=</span><span class="mi">22</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute HAR (Heterogeneous Autoregressive) features from a return series.</span>
-<span class="sd">    </span>
-<span class="sd">    INPUTS:</span>
-<span class="sd">        - returns: ndarray</span>
-<span class="sd">            Daily return series of length T.</span>
-<span class="sd">        - weekly_window: int, optional</span>
-<span class="sd">            Number of days for weekly average. Default is 5.</span>
-<span class="sd">        - monthly_window: int, optional</span>
-<span class="sd">            Number of days for monthly average. Default is 22.</span>
-<span class="sd">    </span>
-<span class="sd">    OUTPUTS:</span>
-<span class="sd">        - har_features: dict with keys &#39;daily&#39;, &#39;weekly&#39;, &#39;monthly&#39;</span>
-<span class="sd">            Each value is an ndarray of length T containing the lagged features.</span>
-<span class="sd">            - &#39;daily&#39;: r_{t-1} (simply lagged returns)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        returns (ndarray): Daily return series of length T.</span>
+<span class="sd">        weekly_window (int, optional): Number of days for weekly average. Default is 5.</span>
+<span class="sd">        monthly_window (int, optional): Number of days for monthly average. Default is 22.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: HAR features with keys:</span>
+<span class="sd">            - &#39;daily&#39;: r_{t-1} (lagged returns)</span>
 <span class="sd">            - &#39;weekly&#39;: average of r_{t-1}, ..., r_{t-5}</span>
 <span class="sd">            - &#39;monthly&#39;: average of r_{t-1}, ..., r_{t-22}</span>
-<span class="sd">    </span>
-<span class="sd">    Note: For the first few observations where full windows are not available,</span>
-<span class="sd">    partial averages are computed using available data.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        For the first few observations where full windows are not available,</span>
+<span class="sd">        partial averages are computed using available data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
     
@@ -142,8 +137,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">monthly</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">returns</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">monthly_window</span><span class="p">:</span><span class="n">t</span><span class="p">])</span>
     
-    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;daily&#39;</span><span class="p">:</span> <span class="n">daily</span><span class="p">,</span> <span class="s1">&#39;weekly&#39;</span><span class="p">:</span> <span class="n">weekly</span><span class="p">,</span> <span class="s1">&#39;monthly&#39;</span><span class="p">:</span> <span class="n">monthly</span><span class="p">}</span></div>
-
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;daily&#39;</span><span class="p">:</span> <span class="n">daily</span><span class="p">,</span> <span class="s1">&#39;weekly&#39;</span><span class="p">:</span> <span class="n">weekly</span><span class="p">,</span> <span class="s1">&#39;monthly&#39;</span><span class="p">:</span> <span class="n">monthly</span><span class="p">}</span>
 
 
 <div class="viewcode-block" id="HAR_CAESar">
@@ -170,12 +164,10 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the HAR-CAESar model.</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - theta: float</span>
-<span class="sd">                Quantile level (e.g., 0.025 for 2.5% VaR).</span>
-<span class="sd">            - lambdas: dict, optional</span>
-<span class="sd">                Penalty weights for soft constraints.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theta (float): Quantile level (e.g., 0.025 for 2.5% VaR).</span>
+<span class="sd">            lambdas (dict, optional): Penalty weights for soft constraints.</span>
 <span class="sd">                Keys: &#39;r&#39; (ES residual), &#39;q&#39; (VaR positivity), &#39;e&#39; (monotonicity).</span>
 <span class="sd">                Default is {&#39;r&#39;: 10, &#39;q&#39;: 10, &#39;e&#39;: 10}.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -203,20 +195,15 @@
 <div class="viewcode-block" id="HAR_CAESar.loss_function">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.har_caesar.HAR_CAESar.loss_function">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the Barrera loss function for ES estimation (Step 2).</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - v: ndarray</span>
-<span class="sd">                Value at Risk forecast.</span>
-<span class="sd">            - r: ndarray</span>
-<span class="sd">                Difference between ES forecast and VaR (r = e - q).</span>
-<span class="sd">            - y: ndarray</span>
-<span class="sd">                Target return series.</span>
-<span class="sd">        </span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - loss_val: float</span>
-<span class="sd">                Barrera loss value.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the Barrera loss function for ES estimation (Step 2).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            v (ndarray): Value at Risk forecast.</span>
+<span class="sd">            r (ndarray): Difference between ES forecast and VaR (r = e - q).</span>
+<span class="sd">            y (ndarray): Target return series.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Barrera loss value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loss_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
             <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">v</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
@@ -227,20 +214,15 @@
 <div class="viewcode-block" id="HAR_CAESar.joint_loss">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.har_caesar.HAR_CAESar.joint_loss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">joint_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the Fissler-Ziegel (Patton) loss function for joint estimation (Step 3).</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - v: ndarray</span>
-<span class="sd">                VaR forecast.</span>
-<span class="sd">            - e: ndarray</span>
-<span class="sd">                ES forecast.</span>
-<span class="sd">            - y: ndarray</span>
-<span class="sd">                Target return series.</span>
-<span class="sd">        </span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - loss_val: float</span>
-<span class="sd">                Fissler-Ziegel loss value.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the Fissler-Ziegel (Patton) loss function for joint estimation (Step 3).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            v (ndarray): VaR forecast.</span>
+<span class="sd">            e (ndarray): ES forecast.</span>
+<span class="sd">            y (ndarray): Target return series.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Fissler-Ziegel loss value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loss_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">v</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">e</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">v</span> <span class="o">/</span> <span class="n">e</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">e</span><span class="p">)</span>
@@ -252,24 +234,17 @@
 <div class="viewcode-block" id="HAR_CAESar.ESloss">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.har_caesar.HAR_CAESar.ESloss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ESloss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the Barrera loss for ES estimation.</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - beta: ndarray</span>
-<span class="sd">                Parameters for ES equation. Shape is (9,).</span>
-<span class="sd">            - y: ndarray</span>
-<span class="sd">                Target return series.</span>
-<span class="sd">            - q: ndarray</span>
-<span class="sd">                VaR forecast from Step 1.</span>
-<span class="sd">            - r0: float</span>
-<span class="sd">                Initial value for r = e - q.</span>
-<span class="sd">            - har_features: dict</span>
-<span class="sd">                HAR features with keys &#39;daily&#39;, &#39;weekly&#39;, &#39;monthly&#39;.</span>
-<span class="sd">        </span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - loss_val: float</span>
-<span class="sd">                Loss value.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the Barrera loss for ES estimation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            beta (ndarray): Parameters for ES equation. Shape is (9,).</span>
+<span class="sd">            y (ndarray): Target return series.</span>
+<span class="sd">            q (ndarray): VaR forecast from Step 1.</span>
+<span class="sd">            r0 (float): Initial value for r = e - q.</span>
+<span class="sd">            har_features (dict): HAR features with keys &#39;daily&#39;, &#39;weekly&#39;, &#39;monthly&#39;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Loss value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">)</span>
         <span class="n">loss_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -279,24 +254,17 @@
 <div class="viewcode-block" id="HAR_CAESar.Jointloss">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.har_caesar.HAR_CAESar.Jointloss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">Jointloss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the Fissler-Ziegel loss for joint estimation.</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - beta: ndarray</span>
-<span class="sd">                Parameters for both equations. Shape is (18,).</span>
-<span class="sd">            - y: ndarray</span>
-<span class="sd">                Target return series.</span>
-<span class="sd">            - q0: float</span>
-<span class="sd">                Initial VaR.</span>
-<span class="sd">            - e0: float</span>
-<span class="sd">                Initial ES.</span>
-<span class="sd">            - har_features: dict</span>
-<span class="sd">                HAR features.</span>
-<span class="sd">        </span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - loss_val: float</span>
-<span class="sd">                Loss value.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the Fissler-Ziegel loss for joint estimation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            beta (ndarray): Parameters for both equations. Shape is (18,).</span>
+<span class="sd">            y (ndarray): Target return series.</span>
+<span class="sd">            q0 (float): Initial VaR.</span>
+<span class="sd">            e0 (float): Initial ES.</span>
+<span class="sd">            har_features (dict): HAR features.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Loss value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">q</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_loop</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">)</span>
         <span class="n">loss_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_loss</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -306,27 +274,7 @@
 <div class="viewcode-block" id="HAR_CAESar.R_HARloop">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.har_caesar.HAR_CAESar.R_HARloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">R_HARloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loop for ES residual (r = e - q) estimation with HAR specification.</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - beta: ndarray</span>
-<span class="sd">                Parameters. Shape is (9,).</span>
-<span class="sd">            - y: ndarray</span>
-<span class="sd">                Target return series.</span>
-<span class="sd">            - q: ndarray</span>
-<span class="sd">                VaR forecast.</span>
-<span class="sd">            - r0: float or list</span>
-<span class="sd">                Initial value(s) for r.</span>
-<span class="sd">            - har_features: dict</span>
-<span class="sd">                HAR features with keys &#39;daily&#39;, &#39;weekly&#39;, &#39;monthly&#39;.</span>
-<span class="sd">            - pred_mode: bool, optional</span>
-<span class="sd">                If True, r0 contains the last state for prediction.</span>
-<span class="sd">        </span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - r: ndarray</span>
-<span class="sd">                ES residual (r = e - q).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recursive loop for ES residual (r = e - q) estimation with HAR specification.&quot;&quot;&quot;</span>
         <span class="n">rd</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;daily&#39;</span><span class="p">]</span>
         <span class="n">rw</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;weekly&#39;</span><span class="p">]</span>
         <span class="n">rm</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;monthly&#39;</span><span class="p">]</span>
@@ -364,30 +312,7 @@
 <div class="viewcode-block" id="HAR_CAESar.Joint_HARloop">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.har_caesar.HAR_CAESar.Joint_HARloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">Joint_HARloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loop for joint VaR and ES estimation with HAR specification.</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - beta: ndarray</span>
-<span class="sd">                Parameters for both equations. Shape is (18,).</span>
-<span class="sd">                First 9 for VaR, next 9 for ES.</span>
-<span class="sd">            - y: ndarray</span>
-<span class="sd">                Target return series.</span>
-<span class="sd">            - q0: float</span>
-<span class="sd">                Initial VaR (not used in pred_mode).</span>
-<span class="sd">            - e0: float or list</span>
-<span class="sd">                Initial ES, or state [y_hist, q_hist, e_hist] in pred_mode.</span>
-<span class="sd">            - har_features: dict</span>
-<span class="sd">                HAR features.</span>
-<span class="sd">            - pred_mode: bool, optional</span>
-<span class="sd">                If True, e0 contains the last state for prediction.</span>
-<span class="sd">        </span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - q: ndarray</span>
-<span class="sd">                VaR forecast.</span>
-<span class="sd">            - e: ndarray</span>
-<span class="sd">                ES forecast.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recursive loop for joint VaR and ES estimation with HAR specification.&quot;&quot;&quot;</span>
         <span class="n">rd</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;daily&#39;</span><span class="p">]</span>
         <span class="n">rw</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;weekly&#39;</span><span class="p">]</span>
         <span class="n">rm</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;monthly&#39;</span><span class="p">]</span>
@@ -446,25 +371,7 @@
 <div class="viewcode-block" id="HAR_CAESar.optim4mp">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.har_caesar.HAR_CAESar.optim4mp">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">optim4mp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">qi</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">beta0</span><span class="p">,</span> <span class="n">n_rep</span><span class="p">,</span> <span class="n">har_features</span><span class="p">,</span> <span class="n">pipend</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Optimization routine for multiprocessing (Step 2: ES estimation).</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - yi: ndarray</span>
-<span class="sd">                Target return series.</span>
-<span class="sd">            - qi: ndarray</span>
-<span class="sd">                VaR forecast from Step 1.</span>
-<span class="sd">            - r0: float</span>
-<span class="sd">                Initial value for r.</span>
-<span class="sd">            - beta0: ndarray</span>
-<span class="sd">                Initial parameters.</span>
-<span class="sd">            - n_rep: int</span>
-<span class="sd">                Number of optimization repetitions.</span>
-<span class="sd">            - har_features: dict</span>
-<span class="sd">                HAR features.</span>
-<span class="sd">            - pipend: multiprocessing.connection.Connection</span>
-<span class="sd">                Pipe for communicating results.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optimization routine for multiprocessing (Step 2: ES estimation).&quot;&quot;&quot;</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
         
         <span class="c1"># First iteration</span>
@@ -488,27 +395,7 @@
 <div class="viewcode-block" id="HAR_CAESar.joint_optim">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.har_caesar.HAR_CAESar.joint_optim">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">joint_optim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">beta0</span><span class="p">,</span> <span class="n">n_rep</span><span class="p">,</span> <span class="n">har_features</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Joint optimization routine (Step 3).</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - yi: ndarray</span>
-<span class="sd">                Target return series.</span>
-<span class="sd">            - q0: float</span>
-<span class="sd">                Initial VaR.</span>
-<span class="sd">            - e0: float</span>
-<span class="sd">                Initial ES.</span>
-<span class="sd">            - beta0: ndarray</span>
-<span class="sd">                Initial parameters. Shape is (18,).</span>
-<span class="sd">            - n_rep: int</span>
-<span class="sd">                Number of optimization repetitions.</span>
-<span class="sd">            - har_features: dict</span>
-<span class="sd">                HAR features.</span>
-<span class="sd">        </span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - beta_worker: ndarray</span>
-<span class="sd">                Optimized parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Joint optimization routine (Step 3).&quot;&quot;&quot;</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
         
         <span class="c1"># First iteration</span>
@@ -533,26 +420,19 @@
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.har_caesar.HAR_CAESar.fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nV</span><span class="o">=</span><span class="mi">102</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_rep</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fit the HAR-CAESar model.</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - yi: ndarray</span>
-<span class="sd">                Target return series.</span>
-<span class="sd">            - seed: int or None, optional</span>
-<span class="sd">                Random seed for reproducibility.</span>
-<span class="sd">            - return_train: bool, optional</span>
-<span class="sd">                If True, return fitted values. Default is False.</span>
-<span class="sd">            - q0: list or None, optional</span>
-<span class="sd">                [initial VaR, initial ES]. If None, computed from data.</span>
-<span class="sd">            - nV: int, optional</span>
-<span class="sd">                Number of random initializations. Default is 102.</span>
-<span class="sd">            - n_init: int, optional</span>
-<span class="sd">                Number of best initializations to use. Default is 3.</span>
-<span class="sd">            - n_rep: int, optional</span>
-<span class="sd">                Number of optimization repetitions. Default is 5.</span>
-<span class="sd">        </span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - dict with keys &#39;qi&#39;, &#39;ei&#39;, &#39;beta&#39; (if return_train=True)</span>
+<span class="sd">        Fit the HAR-CAESar model on a univariate return series.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            yi (ndarray): Target return series.</span>
+<span class="sd">            seed (int, optional): Random seed for reproducibility.</span>
+<span class="sd">            return_train (bool, optional): If True, return in-sample predictions. Default is False.</span>
+<span class="sd">            q0 (list, optional): Initial [VaR, ES]. If None, computed from data.</span>
+<span class="sd">            nV (int, optional): Number of random initializations. Default is 102.</span>
+<span class="sd">            n_init (int, optional): Number of best initializations to refine. Default is 3.</span>
+<span class="sd">            n_rep (int, optional): Number of optimization repetitions. Default is 5.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Keys &#39;qi&#39;, &#39;ei&#39;, &#39;beta&#39; when return_train=True, else None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
         
@@ -683,14 +563,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Predict VaR and ES for new observations.</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - yf: ndarray, optional</span>
-<span class="sd">                New return observations. Default is empty array.</span>
-<span class="sd">        </span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - dict with keys &#39;qf&#39;, &#39;ef&#39;</span>
-<span class="sd">                VaR and ES forecasts.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            yf (ndarray, optional): New return observations. Default is empty array.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Keys &#39;qf&#39; (VaR forecasts) and &#39;ef&#39; (ES forecasts).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">yf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qf&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="s1">&#39;ef&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])}</span>
@@ -732,24 +610,20 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ti</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
                     <span class="n">nV</span><span class="o">=</span><span class="mi">102</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_rep</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fit and predict in one call.</span>
-<span class="sd">        </span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - y: ndarray</span>
-<span class="sd">                Full return series.</span>
-<span class="sd">            - ti: int</span>
-<span class="sd">                Training set length.</span>
-<span class="sd">            - seed: int or None</span>
-<span class="sd">                Random seed.</span>
-<span class="sd">            - return_train: bool</span>
-<span class="sd">                Return training predictions.</span>
-<span class="sd">            - q0: list or None</span>
-<span class="sd">                Initial [VaR, ES].</span>
-<span class="sd">            - nV, n_init, n_rep: int</span>
-<span class="sd">                Optimization parameters.</span>
-<span class="sd">        </span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - dict with keys &#39;qi&#39;, &#39;ei&#39;, &#39;qf&#39;, &#39;ef&#39;, &#39;beta&#39;</span>
+<span class="sd">        Fit the model on training data and predict on test data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            y (ndarray): Full return series.</span>
+<span class="sd">            ti (int): Training set length.</span>
+<span class="sd">            seed (int, optional): Random seed.</span>
+<span class="sd">            return_train (bool, optional): Return training predictions. Default is True.</span>
+<span class="sd">            q0 (list, optional): Initial [VaR, ES].</span>
+<span class="sd">            nV (int, optional): Number of random initializations.</span>
+<span class="sd">            n_init (int, optional): Number of best initializations to refine.</span>
+<span class="sd">            n_rep (int, optional): Number of optimization repetitions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Keys &#39;qi&#39;, &#39;ei&#39;, &#39;qf&#39;, &#39;ef&#39;, &#39;beta&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">yi</span><span class="p">,</span> <span class="n">yf</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:</span><span class="n">ti</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">ti</span><span class="p">:]</span>
         
@@ -783,15 +657,13 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">HAR_CAESar_model</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Factory function for HAR-CAESar model.</span>
-<span class="sd">    </span>
-<span class="sd">    INPUTS:</span>
-<span class="sd">        - theta: float</span>
-<span class="sd">            Quantile level.</span>
-<span class="sd">        - lambdas: dict, optional</span>
-<span class="sd">            Penalty weights.</span>
-<span class="sd">    </span>
-<span class="sd">    OUTPUTS:</span>
-<span class="sd">        - HAR_CAESar model instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theta (float): Quantile level.</span>
+<span class="sd">        lambdas (dict, optional): Penalty weights.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        HAR_CAESar: Model instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">HAR_CAESar</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="n">lambdas</span><span class="p">)</span></div>
 

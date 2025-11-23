@@ -20,24 +20,21 @@ import warnings
 def compute_har_features(returns, weekly_window=5, monthly_window=22):
     """
     Compute HAR (Heterogeneous Autoregressive) features from a return series.
-    
-    INPUTS:
-        - returns: ndarray
-            Daily return series of length T.
-        - weekly_window: int, optional
-            Number of days for weekly average. Default is 5.
-        - monthly_window: int, optional
-            Number of days for monthly average. Default is 22.
-    
-    OUTPUTS:
-        - har_features: dict with keys 'daily', 'weekly', 'monthly'
-            Each value is an ndarray of length T containing the lagged features.
-            - 'daily': r_{t-1} (simply lagged returns)
+
+    Args:
+        returns (ndarray): Daily return series of length T.
+        weekly_window (int, optional): Number of days for weekly average. Default is 5.
+        monthly_window (int, optional): Number of days for monthly average. Default is 22.
+
+    Returns:
+        dict: HAR features with keys:
+            - 'daily': r_{t-1} (lagged returns)
             - 'weekly': average of r_{t-1}, ..., r_{t-5}
             - 'monthly': average of r_{t-1}, ..., r_{t-22}
-    
-    Note: For the first few observations where full windows are not available,
-    partial averages are computed using available data.
+
+    Note:
+        For the first few observations where full windows are not available,
+        partial averages are computed using available data.
     """
     T = len(returns)
     
@@ -91,12 +88,10 @@ class HAR_CAESar:
     def __init__(self, theta, lambdas=dict()):
         """
         Initialize the HAR-CAESar model.
-        
-        INPUTS:
-            - theta: float
-                Quantile level (e.g., 0.025 for 2.5% VaR).
-            - lambdas: dict, optional
-                Penalty weights for soft constraints.
+
+        Args:
+            theta (float): Quantile level (e.g., 0.025 for 2.5% VaR).
+            lambdas (dict, optional): Penalty weights for soft constraints.
                 Keys: 'r' (ES residual), 'q' (VaR positivity), 'e' (monotonicity).
                 Default is {'r': 10, 'q': 10, 'e': 10}.
         """
@@ -122,20 +117,15 @@ class HAR_CAESar:
         self.joint_loop = self.Joint_HARloop
     
     def loss_function(self, v, r, y):
-        """
-        Compute the Barrera loss function for ES estimation (Step 2).
-        
-        INPUTS:
-            - v: ndarray
-                Value at Risk forecast.
-            - r: ndarray
-                Difference between ES forecast and VaR (r = e - q).
-            - y: ndarray
-                Target return series.
-        
-        OUTPUTS:
-            - loss_val: float
-                Barrera loss value.
+        """Compute the Barrera loss function for ES estimation (Step 2).
+
+        Args:
+            v (ndarray): Value at Risk forecast.
+            r (ndarray): Difference between ES forecast and VaR (r = e - q).
+            y (ndarray): Target return series.
+
+        Returns:
+            float: Barrera loss value.
         """
         loss_val = np.mean(
             (r - np.where(y < v, (y - v) / self.theta, 0)) ** 2
@@ -143,20 +133,15 @@ class HAR_CAESar:
         return loss_val
     
     def joint_loss(self, v, e, y):
-        """
-        Compute the Fissler-Ziegel (Patton) loss function for joint estimation (Step 3).
-        
-        INPUTS:
-            - v: ndarray
-                VaR forecast.
-            - e: ndarray
-                ES forecast.
-            - y: ndarray
-                Target return series.
-        
-        OUTPUTS:
-            - loss_val: float
-                Fissler-Ziegel loss value.
+        """Compute the Fissler-Ziegel (Patton) loss function for joint estimation (Step 3).
+
+        Args:
+            v (ndarray): VaR forecast.
+            e (ndarray): ES forecast.
+            y (ndarray): Target return series.
+
+        Returns:
+            float: Fissler-Ziegel loss value.
         """
         loss_val = np.mean(
             np.where(y <= v, (y - v) / (self.theta * e), 0) + v / e + np.log(-e)
@@ -165,75 +150,41 @@ class HAR_CAESar:
         return loss_val
     
     def ESloss(self, beta, y, q, r0, har_features):
-        """
-        Compute the Barrera loss for ES estimation.
-        
-        INPUTS:
-            - beta: ndarray
-                Parameters for ES equation. Shape is (9,).
-            - y: ndarray
-                Target return series.
-            - q: ndarray
-                VaR forecast from Step 1.
-            - r0: float
-                Initial value for r = e - q.
-            - har_features: dict
-                HAR features with keys 'daily', 'weekly', 'monthly'.
-        
-        OUTPUTS:
-            - loss_val: float
-                Loss value.
+        """Compute the Barrera loss for ES estimation.
+
+        Args:
+            beta (ndarray): Parameters for ES equation. Shape is (9,).
+            y (ndarray): Target return series.
+            q (ndarray): VaR forecast from Step 1.
+            r0 (float): Initial value for r = e - q.
+            har_features (dict): HAR features with keys 'daily', 'weekly', 'monthly'.
+
+        Returns:
+            float: Loss value.
         """
         r = self.loop(beta, y, q, r0, har_features)
         loss_val = self.loss_function(q, r, y)
         return loss_val
     
     def Jointloss(self, beta, y, q0, e0, har_features):
-        """
-        Compute the Fissler-Ziegel loss for joint estimation.
-        
-        INPUTS:
-            - beta: ndarray
-                Parameters for both equations. Shape is (18,).
-            - y: ndarray
-                Target return series.
-            - q0: float
-                Initial VaR.
-            - e0: float
-                Initial ES.
-            - har_features: dict
-                HAR features.
-        
-        OUTPUTS:
-            - loss_val: float
-                Loss value.
+        """Compute the Fissler-Ziegel loss for joint estimation.
+
+        Args:
+            beta (ndarray): Parameters for both equations. Shape is (18,).
+            y (ndarray): Target return series.
+            q0 (float): Initial VaR.
+            e0 (float): Initial ES.
+            har_features (dict): HAR features.
+
+        Returns:
+            float: Loss value.
         """
         q, e = self.joint_loop(beta, y, q0, e0, har_features)
         loss_val = self.joint_loss(q, e, y)
         return loss_val
     
     def R_HARloop(self, beta, y, q, r0, har_features, pred_mode=False):
-        """
-        Loop for ES residual (r = e - q) estimation with HAR specification.
-        
-        INPUTS:
-            - beta: ndarray
-                Parameters. Shape is (9,).
-            - y: ndarray
-                Target return series.
-            - q: ndarray
-                VaR forecast.
-            - r0: float or list
-                Initial value(s) for r.
-            - har_features: dict
-                HAR features with keys 'daily', 'weekly', 'monthly'.
-            - pred_mode: bool, optional
-                If True, r0 contains the last state for prediction.
-        
-        OUTPUTS:
-            - r: ndarray
-                ES residual (r = e - q).
-        """
+        """Recursive loop for ES residual (r = e - q) estimation with HAR specification."""
         rd = har_features['daily']
         rw = har_features['weekly']
         rm = har_features['monthly']
@@ -268,30 +219,7 @@ class HAR_CAESar:
         return np.array(r)
     
     def Joint_HARloop(self, beta, y, q0, e0, har_features, pred_mode=False):
-        """
-        Loop for joint VaR and ES estimation with HAR specification.
-        
-        INPUTS:
-            - beta: ndarray
-                Parameters for both equations. Shape is (18,).
-                First 9 for VaR, next 9 for ES.
-            - y: ndarray
-                Target return series.
-            - q0: float
-                Initial VaR (not used in pred_mode).
-            - e0: float or list
-                Initial ES, or state [y_hist, q_hist, e_hist] in pred_mode.
-            - har_features: dict
-                HAR features.
-            - pred_mode: bool, optional
-                If True, e0 contains the last state for prediction.
-        
-        OUTPUTS:
-            - q: ndarray
-                VaR forecast.
-            - e: ndarray
-                ES forecast.
-        """
+        """Recursive loop for joint VaR and ES estimation with HAR specification."""
         rd = har_features['daily']
         rw = har_features['weekly']
         rm = har_features['monthly']
@@ -347,25 +275,7 @@ class HAR_CAESar:
         return np.array(q), np.array(e)
     
     def optim4mp(self, yi, qi, r0, beta0, n_rep, har_features, pipend):
-        """
-        Optimization routine for multiprocessing (Step 2: ES estimation).
-        
-        INPUTS:
-            - yi: ndarray
-                Target return series.
-            - qi: ndarray
-                VaR forecast from Step 1.
-            - r0: float
-                Initial value for r.
-            - beta0: ndarray
-                Initial parameters.
-            - n_rep: int
-                Number of optimization repetitions.
-            - har_features: dict
-                HAR features.
-            - pipend: multiprocessing.connection.Connection
-                Pipe for communicating results.
-        """
+        """Optimization routine for multiprocessing (Step 2: ES estimation)."""
         from scipy.optimize import minimize
         
         # First iteration
@@ -386,27 +296,7 @@ class HAR_CAESar:
         pipend.send((beta_worker, fval_worker, exitflag_worker))
     
     def joint_optim(self, yi, q0, e0, beta0, n_rep, har_features):
-        """
-        Joint optimization routine (Step 3).
-        
-        INPUTS:
-            - yi: ndarray
-                Target return series.
-            - q0: float
-                Initial VaR.
-            - e0: float
-                Initial ES.
-            - beta0: ndarray
-                Initial parameters. Shape is (18,).
-            - n_rep: int
-                Number of optimization repetitions.
-            - har_features: dict
-                HAR features.
-        
-        OUTPUTS:
-            - beta_worker: ndarray
-                Optimized parameters.
-        """
+        """Joint optimization routine (Step 3)."""
         from scipy.optimize import minimize
         
         # First iteration
@@ -428,26 +318,19 @@ class HAR_CAESar:
     
     def fit(self, yi, seed=None, return_train=False, q0=None, nV=102, n_init=3, n_rep=5):
         """
-        Fit the HAR-CAESar model.
-        
-        INPUTS:
-            - yi: ndarray
-                Target return series.
-            - seed: int or None, optional
-                Random seed for reproducibility.
-            - return_train: bool, optional
-                If True, return fitted values. Default is False.
-            - q0: list or None, optional
-                [initial VaR, initial ES]. If None, computed from data.
-            - nV: int, optional
-                Number of random initializations. Default is 102.
-            - n_init: int, optional
-                Number of best initializations to use. Default is 3.
-            - n_rep: int, optional
-                Number of optimization repetitions. Default is 5.
-        
-        OUTPUTS:
-            - dict with keys 'qi', 'ei', 'beta' (if return_train=True)
+        Fit the HAR-CAESar model on a univariate return series.
+
+        Args:
+            yi (ndarray): Target return series.
+            seed (int, optional): Random seed for reproducibility.
+            return_train (bool, optional): If True, return in-sample predictions. Default is False.
+            q0 (list, optional): Initial [VaR, ES]. If None, computed from data.
+            nV (int, optional): Number of random initializations. Default is 102.
+            n_init (int, optional): Number of best initializations to refine. Default is 3.
+            n_rep (int, optional): Number of optimization repetitions. Default is 5.
+
+        Returns:
+            dict: Keys 'qi', 'ei', 'beta' when return_train=True, else None.
         """
         warnings.simplefilter(action='ignore', category=RuntimeWarning)
         
@@ -575,14 +458,12 @@ class HAR_CAESar:
     def predict(self, yf=np.array([])):
         """
         Predict VaR and ES for new observations.
-        
-        INPUTS:
-            - yf: ndarray, optional
-                New return observations. Default is empty array.
-        
-        OUTPUTS:
-            - dict with keys 'qf', 'ef'
-                VaR and ES forecasts.
+
+        Args:
+            yf (ndarray, optional): New return observations. Default is empty array.
+
+        Returns:
+            dict: Keys 'qf' (VaR forecasts) and 'ef' (ES forecasts).
         """
         if len(yf) == 0:
             return {'qf': np.array([]), 'ef': np.array([])}
@@ -621,24 +502,20 @@ class HAR_CAESar:
     def fit_predict(self, y, ti, seed=None, return_train=True, q0=None, 
                     nV=102, n_init=3, n_rep=5):
         """
-        Fit and predict in one call.
-        
-        INPUTS:
-            - y: ndarray
-                Full return series.
-            - ti: int
-                Training set length.
-            - seed: int or None
-                Random seed.
-            - return_train: bool
-                Return training predictions.
-            - q0: list or None
-                Initial [VaR, ES].
-            - nV, n_init, n_rep: int
-                Optimization parameters.
-        
-        OUTPUTS:
-            - dict with keys 'qi', 'ei', 'qf', 'ef', 'beta'
+        Fit the model on training data and predict on test data.
+
+        Args:
+            y (ndarray): Full return series.
+            ti (int): Training set length.
+            seed (int, optional): Random seed.
+            return_train (bool, optional): Return training predictions. Default is True.
+            q0 (list, optional): Initial [VaR, ES].
+            nV (int, optional): Number of random initializations.
+            n_init (int, optional): Number of best initializations to refine.
+            n_rep (int, optional): Number of optimization repetitions.
+
+        Returns:
+            dict: Keys 'qi', 'ei', 'qf', 'ef', 'beta'.
         """
         yi, yf = y[:ti], y[ti:]
         
@@ -668,14 +545,12 @@ class HAR_CAESar:
 def HAR_CAESar_model(theta, lambdas=dict()):
     """
     Factory function for HAR-CAESar model.
-    
-    INPUTS:
-        - theta: float
-            Quantile level.
-        - lambdas: dict, optional
-            Penalty weights.
-    
-    OUTPUTS:
-        - HAR_CAESar model instance.
+
+    Args:
+        theta (float): Quantile level.
+        lambdas (dict, optional): Penalty weights.
+
+    Returns:
+        HAR_CAESar: Model instance.
     """
     return HAR_CAESar(theta, lambdas=lambdas)

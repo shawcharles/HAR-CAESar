@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
-**HAR-CAESar** (Heterogeneous Autoregressive Conditional Autoregressive Expected Shortfall) is a Python library for joint forecasting of Value at Risk (VaR) and Expected Shortfall (ES). The full thesis is available [here](docs/thesis.pdf).
+**HAR-CAESar** (Heterogeneous Autoregressive Conditional Autoregressive Expected Shortfall) is a Python library for joint forecasting of Value at Risk (VaR) and Expected Shortfall (ES). The full thesis is available [here](thesis.pdf).
 
 Developed for the MSc Thesis **"Forecasting Tail Risk with Long-Memory"**, this model extends the CAESar framework by incorporating heterogeneous volatility components (daily, weekly, monthly) to better capture long-memory dynamics in financial tail risk.
 

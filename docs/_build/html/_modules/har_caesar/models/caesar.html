@@ -78,16 +78,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.caviar</span><span class="w"> </span><span class="kn">import</span> <span class="n">CAViaR</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<div class="viewcode-block" id="CAESar_base">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caesar.CAESar_base">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CAESar_base</span><span class="p">():</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span> <span class="c1">#Initialize theta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;r&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;q&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span> <span class="c1">#Initialize lambdas for soft constraints</span>
     
-<div class="viewcode-block" id="CAESar_base.loss_function">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caesar.CAESar_base.loss_function">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Compute the loss function (Barrera) of the model.</span>
@@ -105,11 +101,8 @@
         <span class="n">loss_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
             <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span><span class="o">&lt;</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
             <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">r</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">)</span>
-        <span class="k">return</span> <span class="n">loss_val</span></div>
-
+        <span class="k">return</span> <span class="n">loss_val</span>
     
-<div class="viewcode-block" id="CAESar_base.joint_loss">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caesar.CAESar_base.joint_loss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">joint_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Compute the loss function (Patton) of the model.</span>
@@ -128,11 +121,8 @@
             <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span><span class="o">&lt;=</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">*</span><span class="n">e</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">v</span><span class="o">/</span><span class="n">e</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">e</span><span class="p">)</span>
         <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">e</span><span class="o">&gt;</span><span class="n">v</span><span class="p">,</span> <span class="n">e</span><span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span>\
             <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">[</span><span class="s1">&#39;q&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">)</span>
-        <span class="k">return</span> <span class="n">loss_val</span></div>
+        <span class="k">return</span> <span class="n">loss_val</span>
 
-
-<div class="viewcode-block" id="CAESar_base.ESloss">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caesar.CAESar_base.ESloss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ESloss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Compute the Barrera loss of the model.</span>
@@ -151,11 +141,8 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r0</span><span class="p">)</span> <span class="c1">#Compute ^r</span>
         <span class="n">loss_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="c1">#Compute loss</span>
-        <span class="k">return</span> <span class="n">loss_val</span></div>
-
+        <span class="k">return</span> <span class="n">loss_val</span>
     
-<div class="viewcode-block" id="CAESar_base.Jointloss">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caesar.CAESar_base.Jointloss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">Jointloss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Compute the Patton loss of the model.</span>
@@ -174,11 +161,8 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">q</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_loop</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">)</span> <span class="c1">#Compute ^q and ^e</span>
         <span class="n">loss_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_loss</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="c1">#Compute loss</span>
-        <span class="k">return</span> <span class="n">loss_val</span></div>
-
+        <span class="k">return</span> <span class="n">loss_val</span>
     
-<div class="viewcode-block" id="CAESar_base.optim4mp">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caesar.CAESar_base.optim4mp">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">optim4mp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">qi</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">beta0</span><span class="p">,</span> <span class="n">n_rep</span><span class="p">,</span> <span class="n">pipend</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Optimization routine for multiprocessing.</span>
@@ -217,11 +201,8 @@
                 <span class="k">break</span>
 
         <span class="c1"># Communicate the results to the main process</span>
-        <span class="n">pipend</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">beta_worker</span><span class="p">,</span> <span class="n">fval_beta_worker</span><span class="p">,</span> <span class="n">exitflag_worker</span><span class="p">))</span></div>
+        <span class="n">pipend</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">beta_worker</span><span class="p">,</span> <span class="n">fval_beta_worker</span><span class="p">,</span> <span class="n">exitflag_worker</span><span class="p">))</span>
 
-
-<div class="viewcode-block" id="CAESar_base.joint_optim">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caesar.CAESar_base.joint_optim">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">joint_optim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">beta0</span><span class="p">,</span> <span class="n">n_rep</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Joint optimization routine.</span>
@@ -258,11 +239,8 @@
             <span class="k">if</span> <span class="n">exitflag_worker</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">break</span>
 
-        <span class="k">return</span> <span class="n">beta_worker</span></div>
+        <span class="k">return</span> <span class="n">beta_worker</span>
 
-
-<div class="viewcode-block" id="CAESar_base.fit_predict">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caesar.CAESar_base.fit_predict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ti</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nV</span><span class="o">=</span><span class="mi">102</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_rep</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Fit and predict the CAESar model.</span>
@@ -309,33 +287,35 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="n">q0</span><span class="p">,</span> <span class="n">nV</span><span class="o">=</span><span class="n">nV</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="n">n_init</span><span class="p">,</span> <span class="n">n_rep</span><span class="o">=</span><span class="n">n_rep</span><span class="p">)</span> <span class="c1">#Train AE</span>
             <span class="n">res_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">yf</span><span class="p">)</span>
             <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qf&#39;</span><span class="p">:</span><span class="n">res_test</span><span class="p">[</span><span class="s1">&#39;qf&#39;</span><span class="p">],</span> <span class="s1">&#39;ef&#39;</span><span class="p">:</span><span class="n">res_test</span><span class="p">[</span><span class="s1">&#39;ef&#39;</span><span class="p">],</span>
-                    <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">))}</span> <span class="c1">#Return prediction</span></div>
-</div>
-
+                    <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">))}</span> <span class="c1">#Return prediction</span>
 
 <div class="viewcode-block" id="CAESar_general">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.caesar.CAESar_general">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CAESar_general</span><span class="p">(</span><span class="n">CAESar_base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    CAESar for joint quantile and expected shortfall estimation</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CAESar model for joint VaR and ES estimation.</span>
+
+<span class="sd">    Implements the Conditional Autoregressive Expected Shortfall (CAESar) model</span>
+<span class="sd">    with flexible lag structure and multiple specifications (SAV, AS, GARCH).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theta (float): Quantile level (e.g., 0.025 for 2.5% VaR).</span>
+<span class="sd">        spec (str, optional): Model specification - &#39;SAV&#39;, &#39;AS&#39;, or &#39;GARCH&#39;. Default is &#39;AS&#39;.</span>
+<span class="sd">        lambdas (dict, optional): Penalty weights for soft constraints. Default is {&#39;r&#39;:10, &#39;q&#39;:10, &#39;e&#39;:10}.</span>
+<span class="sd">        p (int, optional): Number of return lags. Default is 1.</span>
+<span class="sd">        u (int, optional): Number of VaR/ES lags. Default is 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="s1">&#39;AS&#39;</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Initialization of the CAESar model.</span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - theta: float</span>
-<span class="sd">                desired confidence level.</span>
-<span class="sd">            - spec: str, optional</span>
-<span class="sd">                specification of the model (SAV, AS, GARCH). Default is AS.</span>
-<span class="sd">            - lambdas: dict, optional</span>
-<span class="sd">                lambdas for the soft constraints. Default is {&#39;r&#39;:10, &#39;q&#39;:10, &#39;e&#39;:10}.</span>
-<span class="sd">            - p: int, optional</span>
-<span class="sd">                number of y_t lags for the model. Default is 1.</span>
-<span class="sd">            - u: int, optional</span>
-<span class="sd">                number of ^q_t lags for the model. Default is 1.</span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - None.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the CAESar model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theta (float): Quantile level.</span>
+<span class="sd">            spec (str, optional): Model specification - &#39;SAV&#39;, &#39;AS&#39;, or &#39;GARCH&#39;. Default is &#39;AS&#39;.</span>
+<span class="sd">            lambdas (dict, optional): Penalty weights. Default is {&#39;r&#39;:10, &#39;q&#39;:10, &#39;e&#39;:10}.</span>
+<span class="sd">            p (int, optional): Number of return lags. Default is 1.</span>
+<span class="sd">            u (int, optional): Number of VaR/ES lags. Default is 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">)</span> <span class="c1">#Initialize the base class</span>
 
         <span class="c1"># Initialize p, u, and v</span>
@@ -2756,8 +2736,6 @@
 </div>
 
 
-<div class="viewcode-block" id="CAESar">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caesar.CAESar">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">CAESar</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="s1">&#39;AS&#39;</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    CAESar model selection.</span>
@@ -2790,8 +2768,7 @@
             <span class="k">return</span> <span class="n">CAESar_2_2</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="n">lambdas</span><span class="p">)</span>
     <span class="c1"># Otherwise, use thee general version and allert the user</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;The selected model is not optimized. Consider using the optimized versions for p and u in {1,2}.&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">CAESar_general</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="n">lambdas</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">)</span></div>
-
+    <span class="k">return</span> <span class="n">CAESar_general</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="n">lambdas</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">)</span>
 </pre></div>
 
            </div>

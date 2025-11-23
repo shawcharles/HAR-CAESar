@@ -2,18 +2,21 @@
 import numpy as np
 
 class GAS1():
-    '''
-    GAS1 model for Expected Shortfall estimation.
-    '''
+    """
+    GAS1 (Generalized Autoregressive Score) model for joint VaR and ES estimation.
+
+    Implements the GAS model with a single score-driven state variable.
+
+    Args:
+        theta (float): Quantile level (e.g., 0.025 for 2.5% VaR).
+    """
     def __init__(self, theta):
-        '''
-        Initialization of the GAS1 model.
-        INPUTS:
-            - theta: float
-                desired confidence level.
-        OUTPUTS:
-            - None
-        '''
+        """
+        Initialize the GAS1 model.
+
+        Args:
+            theta (float): Quantile level.
+        """
         self.theta = theta
 
     def loss(self, v, e, y):
@@ -264,18 +267,21 @@ class GAS1():
                     'beta':self.beta} #Return prediction
         
 class GAS2():
-    '''
-    GAS2 model for Expected Shortfall estimation.
-    '''
+    """
+    GAS2 (Generalized Autoregressive Score) model for joint VaR and ES estimation.
+
+    Implements the GAS model with separate score-driven state variables for VaR and ES.
+
+    Args:
+        theta (float): Quantile level (e.g., 0.025 for 2.5% VaR).
+    """
     def __init__(self, theta):
-        '''
-        Initialization of the GAS2 model.
-        INPUTS:
-            - theta: float
-                desired confidence level.
-        OUTPUTS:
-            - None
-        '''
+        """
+        Initialize the GAS2 model.
+
+        Args:
+            theta (float): Quantile level.
+        """
         self.theta = theta
 
     def loss(self, v, e, y):

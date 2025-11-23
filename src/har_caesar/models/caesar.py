@@ -216,26 +216,30 @@ class CAESar_base():
                     'beta':self.beta.reshape((2, self.n_parameters))} #Return prediction
 
 class CAESar_general(CAESar_base):
-    '''
-    CAESar for joint quantile and expected shortfall estimation
-    '''
+    """
+    CAESar model for joint VaR and ES estimation.
+
+    Implements the Conditional Autoregressive Expected Shortfall (CAESar) model
+    with flexible lag structure and multiple specifications (SAV, AS, GARCH).
+
+    Args:
+        theta (float): Quantile level (e.g., 0.025 for 2.5% VaR).
+        spec (str, optional): Model specification - 'SAV', 'AS', or 'GARCH'. Default is 'AS'.
+        lambdas (dict, optional): Penalty weights for soft constraints. Default is {'r':10, 'q':10, 'e':10}.
+        p (int, optional): Number of return lags. Default is 1.
+        u (int, optional): Number of VaR/ES lags. Default is 1.
+    """
     def __init__(self, theta, spec='AS', lambdas=dict(), p=1, u=1):
-        '''
-        Initialization of the CAESar model.
-        INPUTS:
-            - theta: float
-                desired confidence level.
-            - spec: str, optional
-                specification of the model (SAV, AS, GARCH). Default is AS.
-            - lambdas: dict, optional
-                lambdas for the soft constraints. Default is {'r':10, 'q':10, 'e':10}.
-            - p: int, optional
-                number of y_t lags for the model. Default is 1.
-            - u: int, optional
-                number of ^q_t lags for the model. Default is 1.
-        OUTPUTS:
-            - None.
-        '''
+        """
+        Initialize the CAESar model.
+
+        Args:
+            theta (float): Quantile level.
+            spec (str, optional): Model specification - 'SAV', 'AS', or 'GARCH'. Default is 'AS'.
+            lambdas (dict, optional): Penalty weights. Default is {'r':10, 'q':10, 'e':10}.
+            p (int, optional): Number of return lags. Default is 1.
+            u (int, optional): Number of VaR/ES lags. Default is 1.
+        """
         super().__init__(theta, lambdas) #Initialize the base class
 
         # Initialize p, u, and v

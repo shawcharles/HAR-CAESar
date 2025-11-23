@@ -78,18 +78,21 @@
 <div class="viewcode-block" id="GAS1">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.gas.GAS1">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GAS1</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    GAS1 model for Expected Shortfall estimation.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    GAS1 (Generalized Autoregressive Score) model for joint VaR and ES estimation.</span>
+
+<span class="sd">    Implements the GAS model with a single score-driven state variable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theta (float): Quantile level (e.g., 0.025 for 2.5% VaR).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Initialization of the GAS1 model.</span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - theta: float</span>
-<span class="sd">                desired confidence level.</span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - None</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the GAS1 model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theta (float): Quantile level.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span>
 
 <div class="viewcode-block" id="GAS1.loss">
@@ -367,18 +370,21 @@
 <div class="viewcode-block" id="GAS2">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.gas.GAS2">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GAS2</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    GAS2 model for Expected Shortfall estimation.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    GAS2 (Generalized Autoregressive Score) model for joint VaR and ES estimation.</span>
+
+<span class="sd">    Implements the GAS model with separate score-driven state variables for VaR and ES.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theta (float): Quantile level (e.g., 0.025 for 2.5% VaR).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Initialization of the GAS2 model.</span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - theta: float</span>
-<span class="sd">                desired confidence level.</span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - None</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the GAS2 model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theta (float): Quantile level.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span>
 
 <div class="viewcode-block" id="GAS2.loss">

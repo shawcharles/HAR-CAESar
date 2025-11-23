@@ -1,77 +1,25 @@
-models package
+HAR-CAESar API
 ==============
 
-Submodules
-----------
-
-har_caesar.models.bcgns module
--------------------
-
-.. automodule:: har_caesar.models.bcgns
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-har_caesar.models.caesar module
---------------------
-
-.. automodule:: har_caesar.models.caesar
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-har_caesar.models.har_caesar module
-------------------------
+Core models
+-----------
 
 .. automodule:: har_caesar.models.har_caesar
-   :members:
-   :undoc-members:
+   :members: HAR_CAESar, HAR_CAESar_model
+   :undoc-members: False
    :show-inheritance:
 
-har_caesar.models.caviar module
---------------------
+.. automodule:: har_caesar.models.caesar
+   :members: CAESar_general, CAESar_1_1, CAESar_2_2, CAESar_1_2, CAESar_2_1
+   :undoc-members: False
+   :show-inheritance:
 
 .. automodule:: har_caesar.models.caviar
-   :members:
-   :undoc-members:
+   :members: CAViaR
+   :undoc-members: False
    :show-inheritance:
-
-har_caesar.models.gas module
------------------
 
 .. automodule:: har_caesar.models.gas
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-har_caesar.models.kcaviar module
----------------------
-
-.. automodule:: har_caesar.models.kcaviar
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-har_caesar.models.kqrnn module
--------------------
-
-.. automodule:: har_caesar.models.kqrnn
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-har_caesar.models.special module
----------------------
-
-.. automodule:: har_caesar.models.special
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: har_caesar.models
-   :members:
-   :undoc-members:
+   :members: GAS1, GAS2
+   :undoc-members: False
    :show-inheritance:

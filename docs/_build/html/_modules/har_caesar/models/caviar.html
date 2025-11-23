@@ -76,14 +76,10 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<div class="viewcode-block" id="CAViaR_base">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_base">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CAViaR_base</span><span class="p">():</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
     
-<div class="viewcode-block" id="CAViaR_base.loss_function">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_base.loss_function">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Pinball loss function.</span>
@@ -98,11 +94,8 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span><span class="o">&lt;</span><span class="n">q</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">),</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
 
-
-<div class="viewcode-block" id="CAViaR_base.Qloss">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_base.Qloss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">Qloss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loss function for the CAViaR model.</span>
@@ -118,11 +111,8 @@
 <span class="sd">                loss value.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="CAViaR_base.fit">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_base.fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Fit the CAViaR model.</span>
@@ -194,11 +184,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">exitflag</span> <span class="o">=</span> <span class="n">exitflag</span><span class="p">[</span><span class="n">ind_min</span><span class="p">]</span> <span class="c1">#Store the best exit flag</span>
 
         <span class="n">qi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">q0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">qi</span></div>
+        <span class="k">return</span> <span class="n">qi</span>
 
-
-<div class="viewcode-block" id="CAViaR_base.fit_predict">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_base.fit_predict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ti</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Fit the model and predict the quantile.</span>
@@ -229,31 +216,31 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="n">q0</span><span class="p">)</span> <span class="c1">#Train AE</span>
             <span class="n">qf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">yf</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qf&#39;</span><span class="p">:</span><span class="n">qf</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span> <span class="c1">#Return prediction</span></div>
-</div>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qf&#39;</span><span class="p">:</span><span class="n">qf</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span> <span class="c1">#Return prediction</span>
 
-
-<div class="viewcode-block" id="CAViaR_general">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_general">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CAViaR_general</span><span class="p">(</span><span class="n">CAViaR_base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    CAViaR regression for quantile estimation.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CAViaR (Conditional Autoregressive Value at Risk) model for quantile estimation.</span>
+
+<span class="sd">    Implements the CAViaR model (Engle &amp; Manganelli, 2004) with flexible lag structure</span>
+<span class="sd">    and multiple specifications (SAV, AS, GARCH).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theta (float): Quantile level (e.g., 0.025 for 2.5% VaR).</span>
+<span class="sd">        spec (str, optional): Model specification - &#39;SAV&#39;, &#39;AS&#39;, or &#39;GARCH&#39;. Default is &#39;AS&#39;.</span>
+<span class="sd">        p (int, optional): Number of return lags. Default is 1.</span>
+<span class="sd">        u (int, optional): Number of VaR lags. Default is 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="s1">&#39;AS&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Initialization of the general CAViaR model.</span>
-<span class="sd">        INPUTS:</span>
-<span class="sd">            - theta: float</span>
-<span class="sd">                quantile level.</span>
-<span class="sd">            - spec: str, optional</span>
-<span class="sd">                specification of the model (SAV, AS, GARCH). Default is AS.</span>
-<span class="sd">            - p: int, optional</span>
-<span class="sd">                number of y_t lags for the model. Default is 1.</span>
-<span class="sd">            - u: int, optional</span>
-<span class="sd">                number of ^q_t lags for the model. Default is 1.</span>
-<span class="sd">        OUTPUTS:</span>
-<span class="sd">            - None</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the CAViaR model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theta (float): Quantile level.</span>
+<span class="sd">            spec (str, optional): Model specification - &#39;SAV&#39;, &#39;AS&#39;, or &#39;GARCH&#39;. Default is &#39;AS&#39;.</span>
+<span class="sd">            p (int, optional): Number of return lags. Default is 1.</span>
+<span class="sd">            u (int, optional): Number of VaR lags. Default is 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span> <span class="c1">#Initialize theta</span>
 
         <span class="c1"># Initialize p and u</span>
@@ -275,8 +262,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Specification </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1"> not recognized!</span><span class="se">\n</span><span class="s1">Choose between &quot;SAV&quot;, &quot;AS&quot;, and &quot;GARCH&quot;&#39;</span><span class="p">)</span>
     
-<div class="viewcode-block" id="CAViaR_general.SAVloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_general.SAVloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SAVloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the SAV model.</span>
@@ -304,11 +289,8 @@
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="CAViaR_general.ASloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_general.ASloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ASloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the AS model.</span>
@@ -355,11 +337,8 @@
                         <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">y_coeff_list</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">t</span><span class="o">-</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span> <span class="o">+</span>\
                         <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">beta</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span> <span class="p">)</span>
         <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">q</span></div>
+        <span class="k">return</span> <span class="n">q</span>
 
-
-<div class="viewcode-block" id="CAViaR_general.GARCHloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_general.GARCHloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">GARCHloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the GARCH model.</span>
@@ -386,11 +365,8 @@
         <span class="c1"># Loop</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
-        <span class="k">return</span> <span class="n">q</span></div>
+        <span class="k">return</span> <span class="n">q</span>
 
-
-<div class="viewcode-block" id="CAViaR_general.fit">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_general.fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Fit the CAViaR model.</span>
@@ -414,11 +390,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">yi</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_lag</span><span class="p">:],</span> <span class="n">qi</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_lag</span><span class="p">:]]</span> <span class="c1">#Store the last state</span>
         
         <span class="k">if</span> <span class="n">return_train</span><span class="p">:</span> <span class="c1">#If return_train is True, return the training prediction and coefficients</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span><span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span></div>
-
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span><span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span>
     
-<div class="viewcode-block" id="CAViaR_general.predict">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_general.predict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">())):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Predict the quantile.</span>
@@ -435,12 +408,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yf</span><span class="p">])[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_lag</span><span class="p">:],</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">qf</span><span class="p">])[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_lag</span><span class="p">:]</span> <span class="p">]</span>
-        <span class="k">return</span> <span class="n">qf</span></div>
-</div>
+        <span class="k">return</span> <span class="n">qf</span>
 
-
-<div class="viewcode-block" id="CAViaR_1_1">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_1">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CAViaR_1_1</span><span class="p">(</span><span class="n">CAViaR_base</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    CAViaR regression for quantile estimation - y lags=1, q lags=1.</span>
@@ -474,8 +443,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Specification </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1"> not recognized!</span><span class="se">\n</span><span class="s1">Choose between &quot;SAV&quot;, &quot;AS&quot;, and &quot;GARCH&quot;&#39;</span><span class="p">)</span>
     
-<div class="viewcode-block" id="CAViaR_1_1.SAVloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_1.SAVloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SAVloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the SAV model.</span>
@@ -503,11 +470,8 @@
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="CAViaR_1_1.ASloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_1.ASloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ASloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the AS model.</span>
@@ -535,11 +499,8 @@
         <span class="n">y_plus_coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="c1">#Only one between positive and negative y part gives a contribution</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_plus_coeff</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="CAViaR_1_1.GARCHloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_1.GARCHloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">GARCHloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the GARCH model.</span>
@@ -566,11 +527,8 @@
         <span class="c1"># Loop</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
-        <span class="k">return</span> <span class="n">q</span></div>
+        <span class="k">return</span> <span class="n">q</span>
 
-
-<div class="viewcode-block" id="CAViaR_1_1.fit">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_1.fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Fit the CAViaR model.</span>
@@ -594,11 +552,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">yi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">qi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="c1">#Store the last state</span>
 
         <span class="k">if</span> <span class="n">return_train</span><span class="p">:</span> <span class="c1">#If return_train is True, return the training prediction and coefficients</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span><span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span></div>
-
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span><span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span>
     
-<div class="viewcode-block" id="CAViaR_1_1.predict">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_1.predict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">())):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Predict the quantile.</span>
@@ -613,12 +568,8 @@
         <span class="n">qf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">yf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">yf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">yf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">qf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">qf</span></div>
-</div>
+        <span class="k">return</span> <span class="n">qf</span>
 
-
-<div class="viewcode-block" id="CAViaR_2_2">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_2">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CAViaR_2_2</span><span class="p">(</span><span class="n">CAViaR_base</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    CAViaR regression for quantile estimation - y lags=2, q lags=2.</span>
@@ -652,8 +603,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Specification </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1"> not recognized!</span><span class="se">\n</span><span class="s1">Choose between &quot;SAV&quot;, &quot;AS&quot;, and &quot;GARCH&quot;&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CAViaR_2_2.SAVloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_2.SAVloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SAVloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the SAV model.</span>
@@ -681,11 +630,8 @@
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="CAViaR_2_2.ASloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_2.ASloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ASloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the AS model.</span>
@@ -734,11 +680,8 @@
                         <span class="n">y_coeff_l1</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_coeff_l2</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span>\
                         <span class="n">beta</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="p">)</span>
         <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">q</span></div>
+        <span class="k">return</span> <span class="n">q</span>
 
-
-<div class="viewcode-block" id="CAViaR_2_2.GARCHloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_2.GARCHloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">GARCHloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the GARCH model.</span>
@@ -765,11 +708,8 @@
         <span class="c1"># Loop</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
-        <span class="k">return</span> <span class="n">q</span></div>
+        <span class="k">return</span> <span class="n">q</span>
 
-
-<div class="viewcode-block" id="CAViaR_2_2.fit">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_2.fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Fit the CAViaR model.</span>
@@ -793,11 +733,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">yi</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span> <span class="n">qi</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]]</span> <span class="c1">#Store the last state</span>
 
         <span class="k">if</span> <span class="n">return_train</span><span class="p">:</span> <span class="c1">#If return_train is True, return the training prediction and coefficients</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span><span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span></div>
-
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span><span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span>
     
-<div class="viewcode-block" id="CAViaR_2_2.predict">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_2.predict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">())):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Predict the quantile.</span>
@@ -814,12 +751,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yf</span><span class="p">])[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">qf</span><span class="p">])[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="p">]</span>
-        <span class="k">return</span> <span class="n">qf</span></div>
-</div>
+        <span class="k">return</span> <span class="n">qf</span>
 
-
-<div class="viewcode-block" id="CAViaR_1_2">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_2">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CAViaR_1_2</span><span class="p">(</span><span class="n">CAViaR_base</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    CAViaR regression for quantile estimation - y lags=1, q lags=2.</span>
@@ -853,8 +786,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Specification </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1"> not recognized!</span><span class="se">\n</span><span class="s1">Choose between &quot;SAV&quot;, &quot;AS&quot;, and &quot;GARCH&quot;&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CAViaR_1_2.SAVloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_2.SAVloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SAVloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the SAV model.</span>
@@ -882,11 +813,8 @@
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="CAViaR_1_2.ASloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_2.ASloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ASloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the AS model.</span>
@@ -927,11 +855,8 @@
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
                 <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_coeff_l1</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
         <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">q</span></div>
+        <span class="k">return</span> <span class="n">q</span>
 
-
-<div class="viewcode-block" id="CAViaR_1_2.GARCHloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_2.GARCHloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">GARCHloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the GARCH model.</span>
@@ -958,11 +883,8 @@
         <span class="c1"># Loop</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
-        <span class="k">return</span> <span class="n">q</span></div>
+        <span class="k">return</span> <span class="n">q</span>
 
-
-<div class="viewcode-block" id="CAViaR_1_2.fit">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_2.fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Fit the CAViaR model.</span>
@@ -986,11 +908,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">yi</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span> <span class="n">qi</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]]</span> <span class="c1">#Store the last state</span>
 
         <span class="k">if</span> <span class="n">return_train</span><span class="p">:</span> <span class="c1">#If return_train is True, return the training prediction and coefficients</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span><span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span></div>
-
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span><span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span>
     
-<div class="viewcode-block" id="CAViaR_1_2.predict">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_1_2.predict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">())):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Predict the quantile.</span>
@@ -1007,12 +926,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yf</span><span class="p">])[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">qf</span><span class="p">])[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="p">]</span>
-        <span class="k">return</span> <span class="n">qf</span></div>
-</div>
+        <span class="k">return</span> <span class="n">qf</span>
 
-
-<div class="viewcode-block" id="CAViaR_2_1">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_1">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CAViaR_2_1</span><span class="p">(</span><span class="n">CAViaR_base</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    CAViaR regression for quantile estimation - y lags=2, q lags=1.</span>
@@ -1046,8 +961,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Specification </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1"> not recognized!</span><span class="se">\n</span><span class="s1">Choose between &quot;SAV&quot;, &quot;AS&quot;, and &quot;GARCH&quot;&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CAViaR_2_1.SAVloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_1.SAVloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SAVloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the SAV model.</span>
@@ -1075,11 +988,8 @@
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="CAViaR_2_1.ASloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_1.ASloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ASloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the AS model.</span>
@@ -1128,11 +1038,8 @@
                         <span class="n">y_coeff_l1</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_coeff_l2</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span>\
                         <span class="n">beta</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
         <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">q</span></div>
+        <span class="k">return</span> <span class="n">q</span>
 
-
-<div class="viewcode-block" id="CAViaR_2_1.GARCHloop">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_1.GARCHloop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">GARCHloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Loop for the GARCH model.</span>
@@ -1159,11 +1066,8 @@
         <span class="c1"># Loop</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
             <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
-        <span class="k">return</span> <span class="n">q</span></div>
-
+        <span class="k">return</span> <span class="n">q</span>
  
-<div class="viewcode-block" id="CAViaR_2_1.fit">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_1.fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Fit the CAViaR model.</span>
@@ -1187,11 +1091,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">yi</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span> <span class="n">qi</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]]</span> <span class="c1">#Store the last state</span>
 
         <span class="k">if</span> <span class="n">return_train</span><span class="p">:</span> <span class="c1">#If return_train is True, return the training prediction and coefficients</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span><span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span></div>
-
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span><span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">}</span>
     
-<div class="viewcode-block" id="CAViaR_2_1.predict">
-<a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR_2_1.predict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">())):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Predict the quantile.</span>
@@ -1208,9 +1109,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yf</span><span class="p">])[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">qf</span><span class="p">])[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="p">]</span>
-        <span class="k">return</span> <span class="n">qf</span></div>
-</div>
-
+        <span class="k">return</span> <span class="n">qf</span>
 
 <div class="viewcode-block" id="CAViaR">
 <a class="viewcode-back" href="../../../models.html#har_caesar.models.caviar.CAViaR">[docs]</a>
