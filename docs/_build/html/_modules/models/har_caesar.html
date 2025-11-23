@@ -1,0 +1,824 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>models.har_caesar &mdash; HAR-CAESar 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            HAR-CAESar
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">caesarisk</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">HAR-CAESar</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">models.har_caesar</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for models.har_caesar</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">HAR-CAESar: Heterogeneous Autoregressive Conditional Autoregressive Expected Shortfall</span>
+
+<span class="sd">This module implements the HAR-CAESar model, an extension of CAESar that incorporates</span>
+<span class="sd">heterogeneous autoregressive dynamics based on the Heterogeneous Market Hypothesis</span>
+<span class="sd">(Muller et al., 1997; Corsi, 2009).</span>
+
+<span class="sd">The model includes daily, weekly (5-day), and monthly (22-day) return aggregates</span>
+<span class="sd">to capture long-memory effects in tail risk.</span>
+
+<span class="sd">Author: MSc Thesis Implementation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models.caviar</span><span class="w"> </span><span class="kn">import</span> <span class="n">CAViaR</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+
+<div class="viewcode-block" id="compute_har_features">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.compute_har_features">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_har_features</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">weekly_window</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">monthly_window</span><span class="o">=</span><span class="mi">22</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute HAR (Heterogeneous Autoregressive) features from a return series.</span>
+<span class="sd">    </span>
+<span class="sd">    INPUTS:</span>
+<span class="sd">        - returns: ndarray</span>
+<span class="sd">            Daily return series of length T.</span>
+<span class="sd">        - weekly_window: int, optional</span>
+<span class="sd">            Number of days for weekly average. Default is 5.</span>
+<span class="sd">        - monthly_window: int, optional</span>
+<span class="sd">            Number of days for monthly average. Default is 22.</span>
+<span class="sd">    </span>
+<span class="sd">    OUTPUTS:</span>
+<span class="sd">        - har_features: dict with keys &#39;daily&#39;, &#39;weekly&#39;, &#39;monthly&#39;</span>
+<span class="sd">            Each value is an ndarray of length T containing the lagged features.</span>
+<span class="sd">            - &#39;daily&#39;: r_{t-1} (simply lagged returns)</span>
+<span class="sd">            - &#39;weekly&#39;: average of r_{t-1}, ..., r_{t-5}</span>
+<span class="sd">            - &#39;monthly&#39;: average of r_{t-1}, ..., r_{t-22}</span>
+<span class="sd">    </span>
+<span class="sd">    Note: For the first few observations where full windows are not available,</span>
+<span class="sd">    partial averages are computed using available data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+    
+    <span class="c1"># Daily: just lagged returns (r_{t-1} for forecasting r_t)</span>
+    <span class="n">daily</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">daily</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">daily</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Use first return as initial value</span>
+    
+    <span class="c1"># Weekly: rolling 5-day average of lagged returns</span>
+    <span class="n">weekly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">weekly</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">weekly_window</span><span class="p">:</span>
+            <span class="n">weekly</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">returns</span><span class="p">[:</span><span class="n">t</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weekly</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">returns</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">weekly_window</span><span class="p">:</span><span class="n">t</span><span class="p">])</span>
+    
+    <span class="c1"># Monthly: rolling 22-day average of lagged returns</span>
+    <span class="n">monthly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">monthly</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">monthly_window</span><span class="p">:</span>
+            <span class="n">monthly</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">returns</span><span class="p">[:</span><span class="n">t</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">monthly</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">returns</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">monthly_window</span><span class="p">:</span><span class="n">t</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;daily&#39;</span><span class="p">:</span> <span class="n">daily</span><span class="p">,</span> <span class="s1">&#39;weekly&#39;</span><span class="p">:</span> <span class="n">weekly</span><span class="p">,</span> <span class="s1">&#39;monthly&#39;</span><span class="p">:</span> <span class="n">monthly</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="HAR_CAESar">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HAR_CAESar</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    HAR-CAESar: Heterogeneous Autoregressive CAESar for joint VaR and ES estimation.</span>
+<span class="sd">    </span>
+<span class="sd">    This model extends the standard CAESar (Gatta et al., 2024) by incorporating</span>
+<span class="sd">    HAR-style dynamics that capture long-memory effects in tail risk.</span>
+<span class="sd">    </span>
+<span class="sd">    The VaR equation is:</span>
+<span class="sd">        q_t = β₀ + β₁^(d) r_{t-1}^+ + β₂^(d) r_{t-1}^- </span>
+<span class="sd">            + β₁^(w) r^(w)_{t-1}^+ + β₂^(w) r^(w)_{t-1}^-</span>
+<span class="sd">            + β₁^(m) r^(m)_{t-1}^+ + β₂^(m) r^(m)_{t-1}^-</span>
+<span class="sd">            + β_q q_{t-1} + β_e e_{t-1}</span>
+<span class="sd">    </span>
+<span class="sd">    The ES equation has the same structure with γ coefficients.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters per equation: 9 (intercept + 6 return coeffs + 2 AR terms)</span>
+<span class="sd">    Total parameters: 18</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the HAR-CAESar model.</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - theta: float</span>
+<span class="sd">                Quantile level (e.g., 0.025 for 2.5% VaR).</span>
+<span class="sd">            - lambdas: dict, optional</span>
+<span class="sd">                Penalty weights for soft constraints.</span>
+<span class="sd">                Keys: &#39;r&#39; (ES residual), &#39;q&#39; (VaR positivity), &#39;e&#39; (monotonicity).</span>
+<span class="sd">                Default is {&#39;r&#39;: 10, &#39;q&#39;: 10, &#39;e&#39;: 10}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;r&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;q&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span>
+        
+        <span class="c1"># HAR-CAESar specific parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl_spec</span> <span class="o">=</span> <span class="s1">&#39;HAR&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span> <span class="o">=</span> <span class="mi">9</span>  <span class="c1"># Per equation: intercept + 6 return + 2 AR</span>
+        
+        <span class="c1"># Parameter indices for clarity</span>
+        <span class="c1"># VaR equation (indices 0-8):</span>
+        <span class="c1">#   0: intercept</span>
+        <span class="c1">#   1: daily positive, 2: daily negative</span>
+        <span class="c1">#   3: weekly positive, 4: weekly negative</span>
+        <span class="c1">#   5: monthly positive, 6: monthly negative</span>
+        <span class="c1">#   7: lagged q, 8: lagged e</span>
+        <span class="c1"># ES equation (indices 9-17): same structure</span>
+        
+        <span class="c1"># Set the loop functions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_HARloop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint_loop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Joint_HARloop</span>
+    
+<div class="viewcode-block" id="HAR_CAESar.loss_function">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.loss_function">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the Barrera loss function for ES estimation (Step 2).</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - v: ndarray</span>
+<span class="sd">                Value at Risk forecast.</span>
+<span class="sd">            - r: ndarray</span>
+<span class="sd">                Difference between ES forecast and VaR (r = e - q).</span>
+<span class="sd">            - y: ndarray</span>
+<span class="sd">                Target return series.</span>
+<span class="sd">        </span>
+<span class="sd">        OUTPUTS:</span>
+<span class="sd">            - loss_val: float</span>
+<span class="sd">                Barrera loss value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">v</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">loss_val</span></div>
+
+    
+<div class="viewcode-block" id="HAR_CAESar.joint_loss">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.joint_loss">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">joint_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the Fissler-Ziegel (Patton) loss function for joint estimation (Step 3).</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - v: ndarray</span>
+<span class="sd">                VaR forecast.</span>
+<span class="sd">            - e: ndarray</span>
+<span class="sd">                ES forecast.</span>
+<span class="sd">            - y: ndarray</span>
+<span class="sd">                Target return series.</span>
+<span class="sd">        </span>
+<span class="sd">        OUTPUTS:</span>
+<span class="sd">            - loss_val: float</span>
+<span class="sd">                Fissler-Ziegel loss value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">v</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">e</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">v</span> <span class="o">/</span> <span class="n">e</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">e</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">e</span> <span class="o">&gt;</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="o">-</span> <span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">+</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">[</span><span class="s1">&#39;q&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">loss_val</span></div>
+
+    
+<div class="viewcode-block" id="HAR_CAESar.ESloss">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.ESloss">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ESloss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the Barrera loss for ES estimation.</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - beta: ndarray</span>
+<span class="sd">                Parameters for ES equation. Shape is (9,).</span>
+<span class="sd">            - y: ndarray</span>
+<span class="sd">                Target return series.</span>
+<span class="sd">            - q: ndarray</span>
+<span class="sd">                VaR forecast from Step 1.</span>
+<span class="sd">            - r0: float</span>
+<span class="sd">                Initial value for r = e - q.</span>
+<span class="sd">            - har_features: dict</span>
+<span class="sd">                HAR features with keys &#39;daily&#39;, &#39;weekly&#39;, &#39;monthly&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">        OUTPUTS:</span>
+<span class="sd">            - loss_val: float</span>
+<span class="sd">                Loss value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">)</span>
+        <span class="n">loss_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss_val</span></div>
+
+    
+<div class="viewcode-block" id="HAR_CAESar.Jointloss">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.Jointloss">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Jointloss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the Fissler-Ziegel loss for joint estimation.</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - beta: ndarray</span>
+<span class="sd">                Parameters for both equations. Shape is (18,).</span>
+<span class="sd">            - y: ndarray</span>
+<span class="sd">                Target return series.</span>
+<span class="sd">            - q0: float</span>
+<span class="sd">                Initial VaR.</span>
+<span class="sd">            - e0: float</span>
+<span class="sd">                Initial ES.</span>
+<span class="sd">            - har_features: dict</span>
+<span class="sd">                HAR features.</span>
+<span class="sd">        </span>
+<span class="sd">        OUTPUTS:</span>
+<span class="sd">            - loss_val: float</span>
+<span class="sd">                Loss value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">q</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_loop</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">)</span>
+        <span class="n">loss_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_loss</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss_val</span></div>
+
+    
+<div class="viewcode-block" id="HAR_CAESar.R_HARloop">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.R_HARloop">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">R_HARloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loop for ES residual (r = e - q) estimation with HAR specification.</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - beta: ndarray</span>
+<span class="sd">                Parameters. Shape is (9,).</span>
+<span class="sd">            - y: ndarray</span>
+<span class="sd">                Target return series.</span>
+<span class="sd">            - q: ndarray</span>
+<span class="sd">                VaR forecast.</span>
+<span class="sd">            - r0: float or list</span>
+<span class="sd">                Initial value(s) for r.</span>
+<span class="sd">            - har_features: dict</span>
+<span class="sd">                HAR features with keys &#39;daily&#39;, &#39;weekly&#39;, &#39;monthly&#39;.</span>
+<span class="sd">            - pred_mode: bool, optional</span>
+<span class="sd">                If True, r0 contains the last state for prediction.</span>
+<span class="sd">        </span>
+<span class="sd">        OUTPUTS:</span>
+<span class="sd">            - r: ndarray</span>
+<span class="sd">                ES residual (r = e - q).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rd</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;daily&#39;</span><span class="p">]</span>
+        <span class="n">rw</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;weekly&#39;</span><span class="p">]</span>
+        <span class="n">rm</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;monthly&#39;</span><span class="p">]</span>
+        
+        <span class="c1"># Precompute asymmetric coefficients</span>
+        <span class="n">rd_coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">rw_coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rw</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="n">rm_coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rm</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+        
+        <span class="k">if</span> <span class="n">pred_mode</span><span class="p">:</span>
+            <span class="c1"># In prediction mode, r0 = [last_r]</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">rd_coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">rw_coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">rm_coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">beta</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">*</span> <span class="n">r0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>  <span class="c1"># lagged q from state</span>
+                     <span class="n">beta</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">*</span> <span class="n">r0</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>   <span class="c1"># lagged r from state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="n">r0</span><span class="p">]</span>
+        
+        <span class="c1"># Main loop</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
+            <span class="n">r_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">rd_coeff</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">rd</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">rw_coeff</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">rw</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">rm_coeff</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">rm</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">beta</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">*</span> <span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">beta</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">*</span> <span class="n">r</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r_t</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="HAR_CAESar.Joint_HARloop">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.Joint_HARloop">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Joint_HARloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loop for joint VaR and ES estimation with HAR specification.</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - beta: ndarray</span>
+<span class="sd">                Parameters for both equations. Shape is (18,).</span>
+<span class="sd">                First 9 for VaR, next 9 for ES.</span>
+<span class="sd">            - y: ndarray</span>
+<span class="sd">                Target return series.</span>
+<span class="sd">            - q0: float</span>
+<span class="sd">                Initial VaR (not used in pred_mode).</span>
+<span class="sd">            - e0: float or list</span>
+<span class="sd">                Initial ES, or state [y_hist, q_hist, e_hist] in pred_mode.</span>
+<span class="sd">            - har_features: dict</span>
+<span class="sd">                HAR features.</span>
+<span class="sd">            - pred_mode: bool, optional</span>
+<span class="sd">                If True, e0 contains the last state for prediction.</span>
+<span class="sd">        </span>
+<span class="sd">        OUTPUTS:</span>
+<span class="sd">            - q: ndarray</span>
+<span class="sd">                VaR forecast.</span>
+<span class="sd">            - e: ndarray</span>
+<span class="sd">                ES forecast.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rd</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;daily&#39;</span><span class="p">]</span>
+        <span class="n">rw</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;weekly&#39;</span><span class="p">]</span>
+        <span class="n">rm</span> <span class="o">=</span> <span class="n">har_features</span><span class="p">[</span><span class="s1">&#39;monthly&#39;</span><span class="p">]</span>
+        
+        <span class="c1"># Precompute asymmetric coefficients for VaR equation</span>
+        <span class="n">rd_coeff_q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">rw_coeff_q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rw</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="n">rm_coeff_q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rm</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+        
+        <span class="c1"># Precompute asymmetric coefficients for ES equation</span>
+        <span class="n">rd_coeff_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">11</span><span class="p">])</span>
+        <span class="n">rw_coeff_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rw</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">13</span><span class="p">])</span>
+        <span class="n">rm_coeff_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rm</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="p">[</span><span class="mi">14</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">15</span><span class="p">])</span>
+        
+        <span class="k">if</span> <span class="n">pred_mode</span><span class="p">:</span>
+            <span class="c1"># In prediction mode, e0 = [y_history, q_history, e_history]</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># First prediction uses lagged values from state</span>
+            <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">rd_coeff_q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">rw_coeff_q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">rm_coeff_q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">beta</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">*</span> <span class="n">e0</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>   <span class="c1"># lagged q from state</span>
+                     <span class="n">beta</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">*</span> <span class="n">e0</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>    <span class="c1"># lagged e from state</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">rd_coeff_e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">rw_coeff_e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">rm_coeff_e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                     <span class="n">beta</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span> <span class="o">*</span> <span class="n">e0</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>  <span class="c1"># lagged q from state</span>
+                     <span class="n">beta</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span> <span class="o">*</span> <span class="n">e0</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>   <span class="c1"># lagged e from state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="n">q0</span><span class="p">]</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="p">[</span><span class="n">e0</span><span class="p">]</span>
+        
+        <span class="c1"># Main loop</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
+            <span class="n">q_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">rd_coeff_q</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">rd</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">rw_coeff_q</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">rw</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">rm_coeff_q</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">rm</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">beta</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">*</span> <span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">beta</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">*</span> <span class="n">e</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">e_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">rd_coeff_e</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">rd</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">rw_coeff_e</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">rw</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">rm_coeff_e</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">rm</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">beta</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span> <span class="o">*</span> <span class="n">q</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> 
+                   <span class="n">beta</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span> <span class="o">*</span> <span class="n">e</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q_t</span><span class="p">)</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_t</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="HAR_CAESar.optim4mp">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.optim4mp">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">optim4mp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">qi</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">beta0</span><span class="p">,</span> <span class="n">n_rep</span><span class="p">,</span> <span class="n">har_features</span><span class="p">,</span> <span class="n">pipend</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Optimization routine for multiprocessing (Step 2: ES estimation).</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - yi: ndarray</span>
+<span class="sd">                Target return series.</span>
+<span class="sd">            - qi: ndarray</span>
+<span class="sd">                VaR forecast from Step 1.</span>
+<span class="sd">            - r0: float</span>
+<span class="sd">                Initial value for r.</span>
+<span class="sd">            - beta0: ndarray</span>
+<span class="sd">                Initial parameters.</span>
+<span class="sd">            - n_rep: int</span>
+<span class="sd">                Number of optimization repetitions.</span>
+<span class="sd">            - har_features: dict</span>
+<span class="sd">                HAR features.</span>
+<span class="sd">            - pipend: multiprocessing.connection.Connection</span>
+<span class="sd">                Pipe for communicating results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+        
+        <span class="c1"># First iteration</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ESloss</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">qi</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">),</span> <span class="n">beta0</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+        <span class="n">beta_worker</span><span class="p">,</span> <span class="n">fval_worker</span><span class="p">,</span> <span class="n">exitflag_worker</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">fun</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
+        
+        <span class="c1"># Repeat until success or max iterations</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rep</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ESloss</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">qi</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">),</span> <span class="n">beta_worker</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+            <span class="n">beta_worker</span><span class="p">,</span> <span class="n">fval_worker</span><span class="p">,</span> <span class="n">exitflag_worker</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">fun</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">exitflag_worker</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
+        
+        <span class="n">pipend</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">beta_worker</span><span class="p">,</span> <span class="n">fval_worker</span><span class="p">,</span> <span class="n">exitflag_worker</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="HAR_CAESar.joint_optim">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.joint_optim">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">joint_optim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">beta0</span><span class="p">,</span> <span class="n">n_rep</span><span class="p">,</span> <span class="n">har_features</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Joint optimization routine (Step 3).</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - yi: ndarray</span>
+<span class="sd">                Target return series.</span>
+<span class="sd">            - q0: float</span>
+<span class="sd">                Initial VaR.</span>
+<span class="sd">            - e0: float</span>
+<span class="sd">                Initial ES.</span>
+<span class="sd">            - beta0: ndarray</span>
+<span class="sd">                Initial parameters. Shape is (18,).</span>
+<span class="sd">            - n_rep: int</span>
+<span class="sd">                Number of optimization repetitions.</span>
+<span class="sd">            - har_features: dict</span>
+<span class="sd">                HAR features.</span>
+<span class="sd">        </span>
+<span class="sd">        OUTPUTS:</span>
+<span class="sd">            - beta_worker: ndarray</span>
+<span class="sd">                Optimized parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+        
+        <span class="c1"># First iteration</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jointloss</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">),</span> <span class="n">beta0</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+        <span class="n">beta_worker</span><span class="p">,</span> <span class="n">exitflag_worker</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
+        
+        <span class="c1"># Repeat until success or max iterations</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rep</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jointloss</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">q0</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">har_features</span><span class="p">),</span> <span class="n">beta_worker</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+            <span class="n">beta_worker</span><span class="p">,</span> <span class="n">exitflag_worker</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">exitflag_worker</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
+        
+        <span class="k">return</span> <span class="n">beta_worker</span></div>
+
+    
+<div class="viewcode-block" id="HAR_CAESar.fit">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nV</span><span class="o">=</span><span class="mi">102</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_rep</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit the HAR-CAESar model.</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - yi: ndarray</span>
+<span class="sd">                Target return series.</span>
+<span class="sd">            - seed: int or None, optional</span>
+<span class="sd">                Random seed for reproducibility.</span>
+<span class="sd">            - return_train: bool, optional</span>
+<span class="sd">                If True, return fitted values. Default is False.</span>
+<span class="sd">            - q0: list or None, optional</span>
+<span class="sd">                [initial VaR, initial ES]. If None, computed from data.</span>
+<span class="sd">            - nV: int, optional</span>
+<span class="sd">                Number of random initializations. Default is 102.</span>
+<span class="sd">            - n_init: int, optional</span>
+<span class="sd">                Number of best initializations to use. Default is 3.</span>
+<span class="sd">            - n_rep: int, optional</span>
+<span class="sd">                Number of optimization repetitions. Default is 5.</span>
+<span class="sd">        </span>
+<span class="sd">        OUTPUTS:</span>
+<span class="sd">            - dict with keys &#39;qi&#39;, &#39;ei&#39;, &#39;beta&#39; (if return_train=True)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">yi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">yi</span><span class="p">)</span>
+        
+        <span class="c1"># Compute HAR features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">har_features_train</span> <span class="o">=</span> <span class="n">compute_har_features</span><span class="p">(</span><span class="n">yi</span><span class="p">)</span>
+        
+        <span class="c1">#-------------------- Step 0: CAViaR for initial VaR guess</span>
+        <span class="c1"># Use standard CAViaR (AS specification) for initial VaR</span>
+        <span class="n">cav_res</span> <span class="o">=</span> <span class="n">CAViaR</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="s1">&#39;AS&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+            <span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="n">q0</span><span class="p">)</span>
+        <span class="n">qi</span><span class="p">,</span> <span class="n">beta_cav</span> <span class="o">=</span> <span class="n">cav_res</span><span class="p">[</span><span class="s1">&#39;qi&#39;</span><span class="p">],</span> <span class="n">cav_res</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">cav_res</span>
+        
+        <span class="c1">#-------------------- Step 1: Initialization</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">q0</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+            <span class="n">n_emp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">yi</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">n_emp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">n_emp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">yi</span><span class="p">)</span>
+            <span class="n">y_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">yi</span><span class="p">[:</span><span class="n">n_emp</span><span class="p">])</span>
+            <span class="n">quantile0</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">n_emp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">quantile0</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">quantile0</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">e0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_sort</span><span class="p">[:</span><span class="n">quantile0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">q0_val</span> <span class="o">=</span> <span class="n">y_sort</span><span class="p">[</span><span class="n">quantile0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">q0_val</span> <span class="o">=</span> <span class="n">q0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">e0</span> <span class="o">=</span> <span class="n">q0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="c1">#-------------------- Step 2: Initial guess for ES parameters</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">nInitialVectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">nV</span> <span class="o">//</span> <span class="mi">3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">]</span>
+        <span class="n">beta0</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nInitialVectors</span><span class="p">)]</span>
+        <span class="n">beta0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nInitialVectors</span><span class="p">))</span>
+        <span class="n">beta0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">nInitialVectors</span><span class="p">))</span>
+        <span class="n">beta0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">beta0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># Evaluate initial guesses</span>
+        <span class="n">AEfval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">nV</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nV</span><span class="p">):</span>
+            <span class="n">AEfval</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ESloss</span><span class="p">(</span><span class="n">beta0</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">yi</span><span class="p">,</span> <span class="n">qi</span><span class="p">,</span> <span class="n">e0</span> <span class="o">-</span> <span class="n">q0_val</span><span class="p">,</span> 
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">har_features_train</span><span class="p">)</span>
+        <span class="n">beta0</span> <span class="o">=</span> <span class="n">beta0</span><span class="p">[</span><span class="n">AEfval</span><span class="o">.</span><span class="n">argsort</span><span class="p">()][</span><span class="mi">0</span><span class="p">:</span><span class="n">n_init</span><span class="p">]</span>
+        
+        <span class="c1">#-------------------- Step 3: Optimization - Step I (Barrera loss)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">))</span>
+        <span class="n">fval_beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_init</span><span class="p">)</span>
+        <span class="n">exitflag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_init</span><span class="p">)</span>
+        
+        <span class="c1"># Multiprocessing</span>
+        <span class="n">workers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_init</span><span class="p">):</span>
+            <span class="n">parent_pipend</span><span class="p">,</span> <span class="n">child_pipend</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pipe</span><span class="p">()</span>
+            <span class="n">worker</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span>
+                <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optim4mp</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">qi</span><span class="p">,</span> <span class="n">e0</span> <span class="o">-</span> <span class="n">q0_val</span><span class="p">,</span> <span class="n">beta0</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">n_rep</span><span class="p">,</span> 
+                      <span class="bp">self</span><span class="o">.</span><span class="n">har_features_train</span><span class="p">,</span> <span class="n">child_pipend</span><span class="p">))</span>
+            <span class="n">workers</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">worker</span><span class="p">,</span> <span class="n">parent_pipend</span><span class="p">])</span>
+            <span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        
+        <span class="c1"># Gather results</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">worker_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">workers</span><span class="p">):</span>
+            <span class="n">worker</span><span class="p">,</span> <span class="n">parent_pipend</span> <span class="o">=</span> <span class="n">worker_list</span>
+            <span class="n">beta_worker</span><span class="p">,</span> <span class="n">fval_worker</span><span class="p">,</span> <span class="n">exitflag_worker</span> <span class="o">=</span> <span class="n">parent_pipend</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+            <span class="n">worker</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="n">beta</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">beta_worker</span>
+            <span class="n">fval_beta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fval_worker</span>
+            <span class="n">exitflag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">exitflag_worker</span>
+        
+        <span class="n">ind_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">fval_beta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span> <span class="o">=</span> <span class="n">beta</span><span class="p">[</span><span class="n">ind_min</span><span class="p">,</span> <span class="p">:]</span>
+        
+        <span class="c1">#-------------------- Step 4: Optimization - Step II (Patton/FZ loss)</span>
+        <span class="c1"># Build initial joint parameters from CAViaR and ES estimates</span>
+        <span class="c1"># CAViaR AS has 5 parameters: [intercept, y_pos, y_neg, q_lag, e_lag placeholder]</span>
+        <span class="c1"># We need to map to HAR structure</span>
+        
+        <span class="c1"># Initialize VaR parameters: use CAViaR for daily, zeros for weekly/monthly</span>
+        <span class="n">beta_q_init</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">)</span>
+        <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta_cav</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>      <span class="c1"># intercept</span>
+        <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta_cav</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>      <span class="c1"># daily positive</span>
+        <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta_cav</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>      <span class="c1"># daily negative</span>
+        <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>              <span class="c1"># weekly positive (new)</span>
+        <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>              <span class="c1"># weekly negative (new)</span>
+        <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>              <span class="c1"># monthly positive (new)</span>
+        <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>              <span class="c1"># monthly negative (new)</span>
+        <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta_cav</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>      <span class="c1"># lagged q</span>
+        <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>              <span class="c1"># lagged e (cross term)</span>
+        
+        <span class="c1"># Initialize ES parameters from ES step, adjusted</span>
+        <span class="n">beta_e_init</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">)</span>
+        <span class="n">beta_e_init</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">beta_e_init</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">beta_e_init</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">beta_e_init</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">beta_e_init</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">beta_e_init</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">beta_e_init</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">beta_e_init</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta_q_init</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">beta_e_init</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_es</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        
+        <span class="n">joint_beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">beta_q_init</span><span class="p">,</span> <span class="n">beta_e_init</span><span class="p">])</span>
+        
+        <span class="c1"># Joint optimization</span>
+        <span class="n">joint_beta_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_optim</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">q0_val</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">joint_beta</span><span class="p">,</span> <span class="n">n_rep</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">har_features_train</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">joint_beta_temp</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">joint_beta</span> <span class="o">=</span> <span class="n">joint_beta_temp</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">joint_beta</span>
+        
+        <span class="c1"># Compute fitted values</span>
+        <span class="n">qi</span><span class="p">,</span> <span class="n">ei</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_loop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">q0_val</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">har_features_train</span><span class="p">)</span>
+        
+        <span class="c1"># Store state for prediction (need history for HAR features)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">yi</span><span class="p">[</span><span class="o">-</span><span class="mi">22</span><span class="p">:],</span> <span class="n">qi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:],</span> <span class="n">ei</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]]</span>  <span class="c1"># Keep 22 for monthly avg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_y_full</span> <span class="o">=</span> <span class="n">yi</span>  <span class="c1"># Keep full history for HAR computation</span>
+        
+        <span class="k">if</span> <span class="n">return_train</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qi&#39;</span><span class="p">:</span> <span class="n">qi</span><span class="p">,</span> <span class="s1">&#39;ei&#39;</span><span class="p">:</span> <span class="n">ei</span><span class="p">,</span> 
+                    <span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">))}</span></div>
+
+    
+<div class="viewcode-block" id="HAR_CAESar.predict">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.predict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predict VaR and ES for new observations.</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - yf: ndarray, optional</span>
+<span class="sd">                New return observations. Default is empty array.</span>
+<span class="sd">        </span>
+<span class="sd">        OUTPUTS:</span>
+<span class="sd">            - dict with keys &#39;qf&#39;, &#39;ef&#39;</span>
+<span class="sd">                VaR and ES forecasts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">yf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qf&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="s1">&#39;ef&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])}</span>
+        
+        <span class="c1"># Compute HAR features for prediction</span>
+        <span class="c1"># Combine historical and new data for proper HAR computation</span>
+        <span class="n">y_combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_y_full</span><span class="p">,</span> <span class="n">yf</span><span class="p">])</span>
+        <span class="n">har_features_full</span> <span class="o">=</span> <span class="n">compute_har_features</span><span class="p">(</span><span class="n">y_combined</span><span class="p">)</span>
+        
+        <span class="c1"># Extract features for the forecast period</span>
+        <span class="n">n_hist</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_y_full</span><span class="p">)</span>
+        <span class="n">har_features_pred</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;daily&#39;</span><span class="p">:</span> <span class="n">har_features_full</span><span class="p">[</span><span class="s1">&#39;daily&#39;</span><span class="p">][</span><span class="n">n_hist</span><span class="p">:],</span>
+            <span class="s1">&#39;weekly&#39;</span><span class="p">:</span> <span class="n">har_features_full</span><span class="p">[</span><span class="s1">&#39;weekly&#39;</span><span class="p">][</span><span class="n">n_hist</span><span class="p">:],</span>
+            <span class="s1">&#39;monthly&#39;</span><span class="p">:</span> <span class="n">har_features_full</span><span class="p">[</span><span class="s1">&#39;monthly&#39;</span><span class="p">][</span><span class="n">n_hist</span><span class="p">:]</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># Run prediction loop</span>
+        <span class="n">qf</span><span class="p">,</span> <span class="n">ef</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_loop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">yf</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">,</span> 
+                                  <span class="n">har_features_pred</span><span class="p">,</span> <span class="n">pred_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="c1"># Update state</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">yf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_y_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_y_full</span><span class="p">,</span> <span class="n">yf</span><span class="p">])</span>
+            <span class="c1"># Keep last 22 for state (needed for HAR)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_y_full</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>  <span class="c1"># Trim to avoid memory issues</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_y_full</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_y_full</span><span class="p">[</span><span class="o">-</span><span class="mi">500</span><span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_state</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">last_state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yf</span><span class="p">])[</span><span class="o">-</span><span class="mi">22</span><span class="p">:],</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">qf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ef</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="p">]</span>
+        
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;qf&#39;</span><span class="p">:</span> <span class="n">qf</span><span class="p">,</span> <span class="s1">&#39;ef&#39;</span><span class="p">:</span> <span class="n">ef</span><span class="p">}</span></div>
+
+    
+<div class="viewcode-block" id="HAR_CAESar.fit_predict">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar.fit_predict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ti</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                    <span class="n">nV</span><span class="o">=</span><span class="mi">102</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_rep</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit and predict in one call.</span>
+<span class="sd">        </span>
+<span class="sd">        INPUTS:</span>
+<span class="sd">            - y: ndarray</span>
+<span class="sd">                Full return series.</span>
+<span class="sd">            - ti: int</span>
+<span class="sd">                Training set length.</span>
+<span class="sd">            - seed: int or None</span>
+<span class="sd">                Random seed.</span>
+<span class="sd">            - return_train: bool</span>
+<span class="sd">                Return training predictions.</span>
+<span class="sd">            - q0: list or None</span>
+<span class="sd">                Initial [VaR, ES].</span>
+<span class="sd">            - nV, n_init, n_rep: int</span>
+<span class="sd">                Optimization parameters.</span>
+<span class="sd">        </span>
+<span class="sd">        OUTPUTS:</span>
+<span class="sd">            - dict with keys &#39;qi&#39;, &#39;ei&#39;, &#39;qf&#39;, &#39;ef&#39;, &#39;beta&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">yi</span><span class="p">,</span> <span class="n">yf</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:</span><span class="n">ti</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">ti</span><span class="p">:]</span>
+        
+        <span class="k">if</span> <span class="n">return_train</span><span class="p">:</span>
+            <span class="n">res_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="n">q0</span><span class="p">,</span>
+                                <span class="n">nV</span><span class="o">=</span><span class="n">nV</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="n">n_init</span><span class="p">,</span> <span class="n">n_rep</span><span class="o">=</span><span class="n">n_rep</span><span class="p">)</span>
+            <span class="n">res_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">yf</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;qi&#39;</span><span class="p">:</span> <span class="n">res_train</span><span class="p">[</span><span class="s1">&#39;qi&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;ei&#39;</span><span class="p">:</span> <span class="n">res_train</span><span class="p">[</span><span class="s1">&#39;ei&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;qf&#39;</span><span class="p">:</span> <span class="n">res_test</span><span class="p">[</span><span class="s1">&#39;qf&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;ef&#39;</span><span class="p">:</span> <span class="n">res_test</span><span class="p">[</span><span class="s1">&#39;ef&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">))</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">return_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">q0</span><span class="o">=</span><span class="n">q0</span><span class="p">,</span>
+                    <span class="n">nV</span><span class="o">=</span><span class="n">nV</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="n">n_init</span><span class="p">,</span> <span class="n">n_rep</span><span class="o">=</span><span class="n">n_rep</span><span class="p">)</span>
+            <span class="n">res_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">yf</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;qf&#39;</span><span class="p">:</span> <span class="n">res_test</span><span class="p">[</span><span class="s1">&#39;qf&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;ef&#39;</span><span class="p">:</span> <span class="n">res_test</span><span class="p">[</span><span class="s1">&#39;ef&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">))</span>
+            <span class="p">}</span></div>
+</div>
+
+
+
+<span class="c1"># Convenience function for model selection</span>
+<div class="viewcode-block" id="HAR_CAESar_model">
+<a class="viewcode-back" href="../../models.html#models.har_caesar.HAR_CAESar_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">HAR_CAESar_model</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Factory function for HAR-CAESar model.</span>
+<span class="sd">    </span>
+<span class="sd">    INPUTS:</span>
+<span class="sd">        - theta: float</span>
+<span class="sd">            Quantile level.</span>
+<span class="sd">        - lambdas: dict, optional</span>
+<span class="sd">            Penalty weights.</span>
+<span class="sd">    </span>
+<span class="sd">    OUTPUTS:</span>
+<span class="sd">        - HAR_CAESar model instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">HAR_CAESar</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="n">lambdas</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Federico Gatta &amp; MSc Student.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

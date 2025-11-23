@@ -1,0 +1,890 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils module &mdash; HAR-CAESar 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="models package" href="models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HAR-CAESar
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">caesarisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="models.html">models package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.AS14_test"><code class="docutils literal notranslate"><span class="pre">AS14_test</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utils.AS14_test.__call__"><code class="docutils literal notranslate"><span class="pre">AS14_test.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#utils.AS14_test.as14_transform"><code class="docutils literal notranslate"><span class="pre">AS14_test.as14_transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.DMtest"><code class="docutils literal notranslate"><span class="pre">DMtest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utils.DMtest.__call__"><code class="docutils literal notranslate"><span class="pre">DMtest.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#utils.DMtest.autocovariance"><code class="docutils literal notranslate"><span class="pre">DMtest.autocovariance()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.Encompassing_test"><code class="docutils literal notranslate"><span class="pre">Encompassing_test</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utils.Encompassing_test.__call__"><code class="docutils literal notranslate"><span class="pre">Encompassing_test.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#utils.Encompassing_test.en_transform"><code class="docutils literal notranslate"><span class="pre">Encompassing_test.en_transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.LossDiff_test"><code class="docutils literal notranslate"><span class="pre">LossDiff_test</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utils.LossDiff_test.__call__"><code class="docutils literal notranslate"><span class="pre">LossDiff_test.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#utils.LossDiff_test.ld_transform"><code class="docutils literal notranslate"><span class="pre">LossDiff_test.ld_transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.McneilFrey_test"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utils.McneilFrey_test.__call__"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#utils.McneilFrey_test.mnf_transform"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test.mnf_transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.PinballLoss"><code class="docutils literal notranslate"><span class="pre">PinballLoss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utils.PinballLoss.__call__"><code class="docutils literal notranslate"><span class="pre">PinballLoss.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.barrera_loss"><code class="docutils literal notranslate"><span class="pre">barrera_loss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utils.barrera_loss.__call__"><code class="docutils literal notranslate"><span class="pre">barrera_loss.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.bootstrap_mean_test"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utils.bootstrap_mean_test.__call__"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#utils.bootstrap_mean_test.null_statistic"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.null_statistic()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#utils.bootstrap_mean_test.statistic"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.statistic()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.cr_t_test"><code class="docutils literal notranslate"><span class="pre">cr_t_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.gaussian_tail_stats"><code class="docutils literal notranslate"><span class="pre">gaussian_tail_stats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.patton_loss"><code class="docutils literal notranslate"><span class="pre">patton_loss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utils.patton_loss.__call__"><code class="docutils literal notranslate"><span class="pre">patton_loss.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.tstudent_tail_stats"><code class="docutils literal notranslate"><span class="pre">tstudent_tail_stats()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HAR-CAESar</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">caesarisk</a></li>
+      <li class="breadcrumb-item active">utils module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-utils">
+<span id="utils-module"></span><h1>utils module<a class="headerlink" href="#module-utils" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.AS14_test">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">AS14_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">one_side</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_boot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#AS14_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.AS14_test" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#utils.bootstrap_mean_test" title="utils.bootstrap_mean_test"><code class="xref py py-class docutils literal notranslate"><span class="pre">bootstrap_mean_test</span></code></a></p>
+<p>Acerbi-Szekely test for assessing the goodness of the Expected Shortfall estimate</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.AS14_test.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Z1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#AS14_test.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.AS14_test.__call__" title="Link to this definition"></a></dt>
+<dd><p>Compute the test
+INPUT:
+- Q: numpy array,</p>
+<blockquote>
+<div><p>the quantile estimates</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>E: numpy array,</dt><dd><p>the expected shortfall estimates</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Y: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>test_type: str,</dt><dd><p>the type of test to perform. It must be either ‘Z1’ or ‘Z2’</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>theta: float,</dt><dd><p>the threshold for the test</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>seed: int,</dt><dd><p>the seed for the random number generator. Default is None</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- statistic: float,</p>
+<blockquote>
+<div><p>the test statistic</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>p_value: float,</dt><dd><p>the p-value of the test</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.AS14_test.as14_transform">
+<span class="sig-name descname"><span class="pre">as14_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#AS14_test.as14_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.AS14_test.as14_transform" title="Link to this definition"></a></dt>
+<dd><p>Transform the data to compute the Acerbi-Szekely test
+INPUT:
+- test_type: str,</p>
+<blockquote>
+<div><p>the type of test to perform. It must be either ‘Z1’ or ‘Z2’</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt><a href="#id1"><span class="problematic" id="id2">Q_</span></a>: numpy array,</dt><dd><p>the quantile estimates</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a href="#id3"><span class="problematic" id="id4">E_</span></a>: numpy array,</dt><dd><p>the expected shortfall estimates</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a href="#id5"><span class="problematic" id="id6">Y_</span></a>: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>theta: float,</dt><dd><p>the threshold for the test</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- output: numpy array,</p>
+<blockquote>
+<div><p>the transformed data</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.DMtest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">DMtest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loss_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#DMtest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.DMtest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Diebold-Mariano test for the equality of forecast accuracy.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.DMtest.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#DMtest.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.DMtest.__call__" title="Link to this definition"></a></dt>
+<dd><p>INPUT:
+- Q1: numpy array,</p>
+<blockquote>
+<div><p>the first set of quantile predictions</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>E1: numpy array,</dt><dd><p>the first set of expected shortfall predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Q2: numpy array,</dt><dd><p>the second set of quantile predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>E2: numpy array,</dt><dd><p>the second set of expected shortfall predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Y: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- stat: float,</p>
+<blockquote>
+<div><p>the test statistic</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>p_value: float,</dt><dd><p>the p-value of the test</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mean_difference: float,</dt><dd><p>the mean difference of the losses</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.DMtest.autocovariance">
+<span class="sig-name descname"><span class="pre">autocovariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#DMtest.autocovariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.DMtest.autocovariance" title="Link to this definition"></a></dt>
+<dd><p>Compute the autocovariance of a time series
+INPUT:
+- Xi: numpy array,</p>
+<blockquote>
+<div><p>the time series</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>T: int,</dt><dd><p>the length of the time series</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>k: int,</dt><dd><p>the lag</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Xs: float,</dt><dd><p>the mean of the time series</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- autoCov: float,</p>
+<blockquote>
+<div><p>the autocovariance</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.Encompassing_test">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">Encompassing_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_boot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#Encompassing_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.Encompassing_test" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#utils.bootstrap_mean_test" title="utils.bootstrap_mean_test"><code class="xref py py-class docutils literal notranslate"><span class="pre">bootstrap_mean_test</span></code></a></p>
+<p>Encompassing test to assess whenever the first sample of losses is statistically lower than the second.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.Encompassing_test.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_bench</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_bench</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#Encompassing_test.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.Encompassing_test.__call__" title="Link to this definition"></a></dt>
+<dd><p>Compute the test
+INPUT:
+- Q_new: numpy array,</p>
+<blockquote>
+<div><p>the first set of quantile predictions</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>E_new: numpy array,</dt><dd><p>the first set of expected shortfall predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Q_bench: numpy array,</dt><dd><p>the second set of quantile predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>E_bench: numpy array,</dt><dd><p>the second set of expected shortfall predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Y: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>seed: int,</dt><dd><p>the seed for the random number generator. Default is None</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- statistic: float,</p>
+<blockquote>
+<div><p>the test statistic</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>p_value: float,</dt><dd><p>the p-value of the test</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.Encompassing_test.en_transform">
+<span class="sig-name descname"><span class="pre">en_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q_new_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_new_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_bench_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_bench_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#Encompassing_test.en_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.Encompassing_test.en_transform" title="Link to this definition"></a></dt>
+<dd><p>Transform the data to compute the test
+INPUT:
+- <a href="#id7"><span class="problematic" id="id8">Q_new_</span></a>: numpy array,</p>
+<blockquote>
+<div><p>the first set of quantile predictions</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt><a href="#id9"><span class="problematic" id="id10">E_new_</span></a>: numpy array,</dt><dd><p>the first set of expected shortfall predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a href="#id11"><span class="problematic" id="id12">Q_bench_</span></a>: numpy array,</dt><dd><p>the second set of quantile predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a href="#id13"><span class="problematic" id="id14">E_bench_</span></a>: numpy array,</dt><dd><p>the second set of expected shortfall predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a href="#id15"><span class="problematic" id="id16">Y_</span></a>: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- output: numpy array,</p>
+<blockquote>
+<div><p>the transformed data</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.LossDiff_test">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">LossDiff_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_boot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#LossDiff_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.LossDiff_test" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#utils.bootstrap_mean_test" title="utils.bootstrap_mean_test"><code class="xref py py-class docutils literal notranslate"><span class="pre">bootstrap_mean_test</span></code></a></p>
+<p>Encompassing test to assess whenever the first sample of losses is statistically lower than the second.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.LossDiff_test.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_bench</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_bench</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#LossDiff_test.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.LossDiff_test.__call__" title="Link to this definition"></a></dt>
+<dd><p>Compute the test
+INPUT:
+- Q_new: numpy array,</p>
+<blockquote>
+<div><p>the first set of quantile predictions</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>E_new: numpy array,</dt><dd><p>the first set of expected shortfall predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Q_bench: numpy array,</dt><dd><p>the second set of quantile predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>E_bench: numpy array,</dt><dd><p>the second set of expected shortfall predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Y: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>seed: int,</dt><dd><p>the seed for the random number generator. Default is None</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- statistic: float,</p>
+<blockquote>
+<div><p>the test statistic</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>p_value: float,</dt><dd><p>the p-value of the test</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.LossDiff_test.ld_transform">
+<span class="sig-name descname"><span class="pre">ld_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_bench</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_bench</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#LossDiff_test.ld_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.LossDiff_test.ld_transform" title="Link to this definition"></a></dt>
+<dd><p>Transform the data to compute the test
+INPUT:
+- Q_new: numpy array,</p>
+<blockquote>
+<div><p>the first set of quantile predictions</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>E_new: numpy array,</dt><dd><p>the first set of expected shortfall predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Q_bench: numpy array,</dt><dd><p>the second set of quantile predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>E_bench: numpy array,</dt><dd><p>the second set of expected shortfall predictions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Y: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- output: numpy array,</p>
+<blockquote>
+<div><p>the transformed data</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.McneilFrey_test">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">McneilFrey_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">one_side</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_boot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#McneilFrey_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.McneilFrey_test" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#utils.bootstrap_mean_test" title="utils.bootstrap_mean_test"><code class="xref py py-class docutils literal notranslate"><span class="pre">bootstrap_mean_test</span></code></a></p>
+<p>McNeil-Frey test for assessing the goodness of the Expected Shortfall estimate</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.McneilFrey_test.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#McneilFrey_test.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.McneilFrey_test.__call__" title="Link to this definition"></a></dt>
+<dd><p>Compute the test
+INPUT:
+- Q: numpy array,</p>
+<blockquote>
+<div><p>the quantile estimates</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>E: numpy array,</dt><dd><p>the expected shortfall estimates</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Y: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>seed: int,</dt><dd><p>the seed for the random number generator. Default is None</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- statistic: float,</p>
+<blockquote>
+<div><p>the test statistic</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>p_value: float,</dt><dd><p>the p-value of the test</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.McneilFrey_test.mnf_transform">
+<span class="sig-name descname"><span class="pre">mnf_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#McneilFrey_test.mnf_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.McneilFrey_test.mnf_transform" title="Link to this definition"></a></dt>
+<dd><p>Transform the data to compute the McNeil-Frey test
+INPUT:
+- <a href="#id17"><span class="problematic" id="id18">Q_</span></a>: numpy array,</p>
+<blockquote>
+<div><p>the quantile estimates</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt><a href="#id19"><span class="problematic" id="id20">E_</span></a>: numpy array,</dt><dd><p>the expected shortfall estimates</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a href="#id21"><span class="problematic" id="id22">Y_</span></a>: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- output: numpy array,</p>
+<blockquote>
+<div><p>the transformed data</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.PinballLoss">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">PinballLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quantile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#PinballLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.PinballLoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Pinball or Quantile loss function</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.PinballLoss.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_true</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#PinballLoss.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.PinballLoss.__call__" title="Link to this definition"></a></dt>
+<dd><p>INPUT:
+- y_pred: numpy array,</p>
+<blockquote>
+<div><p>the predicted values</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>y_true: numpy array,</dt><dd><p>the true values</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- loss: float,</p>
+<blockquote>
+<div><p>the mean pinball loss</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.barrera_loss">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">barrera_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#barrera_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.barrera_loss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Barrera loss function</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.barrera_loss.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#barrera_loss.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.barrera_loss.__call__" title="Link to this definition"></a></dt>
+<dd><p>INPUT:
+- <a href="#id23"><span class="problematic" id="id24">v_</span></a>: numpy array,</p>
+<blockquote>
+<div><p>the quantile estimate</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt><a href="#id25"><span class="problematic" id="id26">e_</span></a>: numpy array,</dt><dd><p>the expected shortfall estimate</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a href="#id27"><span class="problematic" id="id28">y_</span></a>: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- loss: float,</p>
+<blockquote>
+<div><p>the loss function mean value, if ret_mean is True. Otherwise, the loss for each observation</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.bootstrap_mean_test">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">bootstrap_mean_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu_target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_side</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_boot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#bootstrap_mean_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.bootstrap_mean_test" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Bootstrap test for the mean of a sample</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.bootstrap_mean_test.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#bootstrap_mean_test.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.bootstrap_mean_test.__call__" title="Link to this definition"></a></dt>
+<dd><p>Compute the test
+INPUT:
+- data: numpy array,</p>
+<blockquote>
+<div><p>the original sample</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>seed: int,</dt><dd><p>the seed for the random number generator. Default is None</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- statistic: float,</p>
+<blockquote>
+<div><p>the test statistic</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>p_value: float,</dt><dd><p>the p-value of the test</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.bootstrap_mean_test.null_statistic">
+<span class="sig-name descname"><span class="pre">null_statistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#bootstrap_mean_test.null_statistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.bootstrap_mean_test.null_statistic" title="Link to this definition"></a></dt>
+<dd><p>Compute the null statistic for the bootstrap sample
+INPUT:
+- B_data: numpy array,</p>
+<blockquote>
+<div><p>the bootstrap sample</p>
+</div></blockquote>
+<p>OUTPUT:
+- stat: float,</p>
+<blockquote>
+<div><p>the null statistic</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.bootstrap_mean_test.statistic">
+<span class="sig-name descname"><span class="pre">statistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#bootstrap_mean_test.statistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.bootstrap_mean_test.statistic" title="Link to this definition"></a></dt>
+<dd><p>Compute the test statistic for the original sample
+INPUT:
+- data: numpy array,</p>
+<blockquote>
+<div><p>the original sample</p>
+</div></blockquote>
+<p>OUTPUT:
+- stat: float,</p>
+<blockquote>
+<div><p>the test statistic</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.cr_t_test">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">cr_t_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errorsA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errorsB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_len</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_len</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#cr_t_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.cr_t_test" title="Link to this definition"></a></dt>
+<dd><p>Corrected resampled t-test for the equality of forecast accuracy.
+INPUT:
+- errorsA: numpy array,</p>
+<blockquote>
+<div><p>the first set of forecast errors</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>errorsB: numpy array,</dt><dd><p>the second set of forecast errors</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>train_len: int,</dt><dd><p>the length of the training set</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>test_len: int,</dt><dd><p>the length of the test set</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- stat: float,</p>
+<blockquote>
+<div><p>the test statistic</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>p_val: float,</dt><dd><p>the p-value of the test</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.gaussian_tail_stats">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">gaussian_tail_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#gaussian_tail_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.gaussian_tail_stats" title="Link to this definition"></a></dt>
+<dd><p>Compute the Value at Risk and Expected Shortfall for a Gaussian distribution
+INPUT:
+- theta: float,</p>
+<blockquote>
+<div><p>the quantile to compute the statistics</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>loc: numpy array,</dt><dd><p>the mean of the distribution</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>scale: numpy array,</dt><dd><p>the standard deviation of the distribution</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- var: numpy array,</p>
+<blockquote>
+<div><p>the Value at Risk</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>es: numpy array,</dt><dd><p>the Expected Shortfall</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.patton_loss">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">patton_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#patton_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.patton_loss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Patton loss function</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.patton_loss.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#patton_loss.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.patton_loss.__call__" title="Link to this definition"></a></dt>
+<dd><p>INPUT:
+- <a href="#id29"><span class="problematic" id="id30">v_</span></a>: numpy array,</p>
+<blockquote>
+<div><p>the quantile estimate</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt><a href="#id31"><span class="problematic" id="id32">e_</span></a>: numpy array,</dt><dd><p>the expected shortfall estimate</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a href="#id33"><span class="problematic" id="id34">y_</span></a>: numpy array,</dt><dd><p>the actual time series</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- loss: float,</p>
+<blockquote>
+<div><p>the loss function mean value, if ret_mean is True. Otherwise, the loss for each observation</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.tstudent_tail_stats">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">tstudent_tail_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#tstudent_tail_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.tstudent_tail_stats" title="Link to this definition"></a></dt>
+<dd><p>Compute the Value at Risk and Expected Shortfall for a Student’s t distribution
+INPUT:
+- theta: float,</p>
+<blockquote>
+<div><p>the quantile to compute the statistics</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>df: int,</dt><dd><p>the degrees of freedom of the distribution</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>loc: numpy array,</dt><dd><p>the mean of the distribution</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>scale: numpy array,</dt><dd><p>the standard deviation of the distribution</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- var: numpy array,</p>
+<blockquote>
+<div><p>the Value at Risk</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>es: numpy array,</dt><dd><p>the Expected Shortfall</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="models.html" class="btn btn-neutral float-left" title="models package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Federico Gatta &amp; Charles Shaw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
