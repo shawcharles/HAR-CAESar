@@ -10,10 +10,9 @@ Developed for the MSc Thesis **"Forecasting Tail Risk with Long-Memory"**, this 
 
 ## Key Features
 
--   **Long-Memory Modeling**: Captures volatility cascades using HAR dynamics (Corsi, 2009).
--   **Joint Estimation**: Simultaneous estimation of VaR and ES using the Fissler-Ziegel consistent loss function.
--   **Production Ready**: Fully typed, tested, and structured as a standard Python package.
--   **Benchmarks**: Includes implementations of standard CAESar, CAViaR, and GAS models for comparison.
+-   **Long-Memory Modeling**. Captures volatility cascades using HAR dynamics (Corsi, 2009).
+-   **Joint Estimation**. Simultaneous estimation of VaR and ES using the Fissler-Ziegel consistent loss function.
+-   **Benchmarks**. Includes implementations of standard CAESar, CAViaR, and GAS models for comparison.
 
 ## Model Specification
 
