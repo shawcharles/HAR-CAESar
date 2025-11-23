@@ -1,8 +1,8 @@
 # HAR-CAESar
 
-[\![Tests](https://github.com/shawcharles/HAR-CAESar/actions/workflows/tests.yml/badge.svg)](https://github.com/shawcharles/HAR-CAESar/actions/workflows/tests.yml)
-[\![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[\![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://github.com/shawcharles/HAR-CAESar/actions/workflows/tests.yml/badge.svg)](https://github.com/shawcharles/HAR-CAESar/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
 **HAR-CAESar** (Heterogeneous Autoregressive Conditional Autoregressive Expected Shortfall) is a Python library for joint forecasting of Value at Risk (VaR) and Expected Shortfall (ES). The full thesis is available [here](docs/thesis.pdf).
 
@@ -19,9 +19,9 @@ Developed for the MSc Thesis **"Forecasting Tail Risk with Long-Memory"**, this 
 
 The HAR-CAESar model modifies the autoregressive structure of tail risk to condition on multi-horizon returns:
 
-1857694
+```math
 \text{VaR}_t = \beta_0 + \beta_d r_{t-1}^{(d)} + \beta_w r_{t-1}^{(w)} + \beta_m r_{t-1}^{(m)} + \beta_q \text{VaR}_{t-1} + \beta_e \text{ES}_{t-1}
-1857694
+```
 
 Where $r^{(d)}$, $r^{(w)}$, and $r^{(m)}$ represent daily, weekly, and monthly aggregated return components, allowing the model to adapt to different frequency information flows.
 
