@@ -136,6 +136,8 @@ def run_experiment(theta):
     # Rolling window experiment
     n_windows = (len(df_returns) - TRAIN_WINDOW - TEST_WINDOW) // STEP_SIZE + 1
     
+    # NOTE: The min(n_windows, 10) cap is for development/testing only.
+    # For full experiments reported in thesis, remove the cap: range(n_windows)
     for window_idx in tqdm(range(min(n_windows, 10)), desc=f"Windows (theta={theta})"):
         start_idx = window_idx * STEP_SIZE
         train_end = start_idx + TRAIN_WINDOW

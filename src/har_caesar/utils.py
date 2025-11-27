@@ -601,6 +601,126 @@ class Encompassing_test(bootstrap_mean_test):
         return super().__call__( self.en_transform(
             Q_new, E_new, Q_bench, E_bench, Y).flatten(), seed)
     
+def christoffersen_cc_test(violations, theta):
+    '''
+    Christoffersen (1998) conditional coverage test for VaR backtesting.
+    
+    Tests both unconditional coverage (correct violation rate) and independence
+    (no clustering of violations). The test statistic is LR_CC = LR_UC + LR_IND,
+    distributed as chi-squared with 2 degrees of freedom under the null.
+    
+    INPUT:
+    - violations: numpy array,
+        binary array where 1 indicates a VaR violation at time t
+    - theta: float,
+        the nominal coverage level (e.g., 0.025 for 2.5% VaR)
+    
+    OUTPUT:
+    - dict with keys:
+        - 'LR_UC': float, unconditional coverage test statistic
+        - 'LR_IND': float, independence test statistic
+        - 'LR_CC': float, conditional coverage test statistic
+        - 'p_value_UC': float, p-value for unconditional coverage
+        - 'p_value_IND': float, p-value for independence
+        - 'p_value_CC': float, p-value for conditional coverage
+        - 'violation_rate': float, observed violation rate
+    '''
+    from scipy.stats import chi2
+    
+    # Flatten and convert to binary array
+    violations = violations.flatten().astype(int)
+    T = len(violations)
+    n_violations = np.sum(violations)
+    violation_rate = n_violations / T
+    
+    # Unconditional Coverage Test (Kupiec 1995)
+    if n_violations == 0 or n_violations == T:
+        # Edge case: no violations or all violations
+        LR_UC = np.inf if (n_violations == 0 and theta > 0) or (n_violations == T and theta < 1) else 0
+        p_value_UC = 0 if LR_UC == np.inf else 1
+    else:
+        LR_UC = -2 * (
+            n_violations * np.log(theta) + 
+            (T - n_violations) * np.log(1 - theta) -
+            n_violations * np.log(violation_rate) - 
+            (T - n_violations) * np.log(1 - violation_rate)
+        )
+        p_value_UC = 1 - chi2.cdf(LR_UC, df=1)
+    
+    # Independence Test (Christoffersen 1998)
+    # Count transitions: n_ij = number of times state i is followed by state j
+    # States: 0 = no violation, 1 = violation
+    n_00 = np.sum((violations[:-1] == 0) & (violations[1:] == 0))
+    n_01 = np.sum((violations[:-1] == 0) & (violations[1:] == 1))
+    n_10 = np.sum((violations[:-1] == 1) & (violations[1:] == 0))
+    n_11 = np.sum((violations[:-1] == 1) & (violations[1:] == 1))
+    
+    # Transition probabilities
+    # pi_0 = P(violation at t | no violation at t-1)
+    # pi_1 = P(violation at t | violation at t-1)
+    if n_00 + n_01 == 0:
+        pi_0 = 0
+    else:
+        pi_0 = n_01 / (n_00 + n_01)
+    
+    if n_10 + n_11 == 0:
+        pi_1 = 0
+    else:
+        pi_1 = n_11 / (n_10 + n_11)
+    
+    # Unconditional probability (pooled)
+    pi = (n_01 + n_11) / (T - 1)
+    
+    # Likelihood ratio test for independence
+    # H0: pi_0 = pi_1 (violations are independent)
+    # H1: pi_0 ≠ pi_1 (violations are clustered)
+    
+    if pi_0 == 0 and pi_1 == 0:
+        # No violations in the sequence
+        LR_IND = 0
+        p_value_IND = 1
+    elif pi == 0 or pi == 1:
+        # All same state
+        LR_IND = 0
+        p_value_IND = 1
+    else:
+        # Compute log-likelihood under H0 (independence)
+        LL_H0 = (n_00 + n_10) * np.log(1 - pi) + (n_01 + n_11) * np.log(pi)
+        
+        # Compute log-likelihood under H1 (dependence)
+        LL_H1 = 0
+        if pi_0 > 0 and pi_0 < 1:
+            LL_H1 += n_00 * np.log(1 - pi_0) + n_01 * np.log(pi_0)
+        elif pi_0 == 0:
+            LL_H1 += n_00 * np.log(1 - 1e-10)  # Avoid log(0)
+        else:  # pi_0 == 1
+            LL_H1 += n_01 * np.log(1 - 1e-10)
+        
+        if pi_1 > 0 and pi_1 < 1:
+            LL_H1 += n_10 * np.log(1 - pi_1) + n_11 * np.log(pi_1)
+        elif pi_1 == 0:
+            LL_H1 += n_10 * np.log(1 - 1e-10)
+        else:  # pi_1 == 1
+            LL_H1 += n_11 * np.log(1 - 1e-10)
+        
+        LR_IND = -2 * (LL_H0 - LL_H1)
+        p_value_IND = 1 - chi2.cdf(LR_IND, df=1)
+    
+    # Conditional Coverage Test
+    LR_CC = LR_UC + LR_IND
+    p_value_CC = 1 - chi2.cdf(LR_CC, df=2)
+    
+    return {
+        'LR_UC': LR_UC,
+        'LR_IND': LR_IND,
+        'LR_CC': LR_CC,
+        'p_value_UC': p_value_UC,
+        'p_value_IND': p_value_IND,
+        'p_value_CC': p_value_CC,
+        'violation_rate': violation_rate,
+        'n_violations': n_violations
+    }
+
 def gaussian_tail_stats(theta, loc=0, scale=1):
     '''
     Compute the Value at Risk and Expected Shortfall for a Gaussian distribution

@@ -144,7 +144,7 @@ class HAR_CAESar:
             float: Fissler-Ziegel loss value.
         """
         loss_val = np.mean(
-            np.where(y <= v, (y - v) / (self.theta * e), 0) + v / e + np.log(-e)
+            np.where(y <= v, (y - v) / (self.theta * e), 0) + v / e + np.log(-e) - 1
         ) + self.lambdas['e'] * np.mean(np.where(e > v, e - v, 0)) + \
             self.lambdas['q'] * np.mean(np.where(v > 0, v, 0))
         return loss_val
