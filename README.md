@@ -11,8 +11,11 @@ Developed for the MSc Thesis **"Forecasting Tail Risk with Long-Memory"**, this 
 ## Key Features
 
 -   **Long-Memory Modeling**. Captures volatility cascades using HAR dynamics (Corsi, 2009).
--   **Joint Estimation**. Simultaneous estimation of VaR and ES using the Fissler-Ziegel consistent loss function.
--   **Benchmarks**. Includes implementations of standard CAESar, CAViaR, and GAS models for comparison.
+-   **Asymmetric Slope Effects**. Separates positive and negative return impacts at daily, weekly, and monthly horizons.
+-   **Joint Estimation**. Simultaneous VaR and ES estimation using the Fissler-Ziegel consistent loss function.
+-   **Robust Estimation**. Three-stage procedure with multiple random initializations and convergence verification.
+-   **Comprehensive Backtesting**. Implements Kupiec, Christoffersen, McNeil-Frey, and Acerbi-Szekely tests.
+-   **Benchmarks**. Includes CAESar, CAViaR, GAS1, and GAS2 implementations for comparison.
 
 ## Model Specification
 
