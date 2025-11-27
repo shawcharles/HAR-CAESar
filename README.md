@@ -19,13 +19,59 @@ Developed for the MSc Thesis **"Forecasting Tail Risk with Long-Memory"**, this 
 
 ## Model Specification
 
-The HAR-CAESar model modifies the autoregressive structure of tail risk to condition on multi-horizon returns:
+The HAR-CAESar model extends CAESar with heterogeneous autoregressive dynamics, incorporating asymmetric slope effects at multiple horizons:
 
+**VaR Equation:**
 ```math
-\text{VaR}_t = \beta_0 + \beta_d r_{t-1}^{(d)} + \beta_w r_{t-1}^{(w)} + \beta_m r_{t-1}^{(m)} + \beta_q \text{VaR}_{t-1} + \beta_e \text{ES}_{t-1}
+\text{VaR}_t = \beta_0 + \beta_1^{(d)} (r_{t-1}^{(d)})^+ + \beta_2^{(d)} (r_{t-1}^{(d)})^- + \beta_1^{(w)} (r_{t-1}^{(w)})^+ + \beta_2^{(w)} (r_{t-1}^{(w)})^- + \beta_1^{(m)} (r_{t-1}^{(m)})^+ + \beta_2^{(m)} (r_{t-1}^{(m)})^- + \beta_3 \text{VaR}_{t-1} + \beta_4 \text{ES}_{t-1}
 ```
 
-Where $r^{(d)}$, $r^{(w)}$, and $r^{(m)}$ represent daily, weekly, and monthly aggregated return components, allowing the model to adapt to different frequency information flows.
+**ES Equation:**
+```math
+\text{ES}_t = \gamma_0 + \gamma_1^{(d)} (r_{t-1}^{(d)})^+ + \gamma_2^{(d)} (r_{t-1}^{(d)})^- + \gamma_1^{(w)} (r_{t-1}^{(w)})^+ + \gamma_2^{(w)} (r_{t-1}^{(w)})^- + \gamma_1^{(m)} (r_{t-1}^{(m)})^+ + \gamma_2^{(m)} (r_{t-1}^{(m)})^- + \gamma_3 \text{VaR}_{t-1} + \gamma_4 \text{ES}_{t-1}
+```
+
+Where:
+- $r^{(d)}$, $r^{(w)}$, $r^{(m)}$ = daily, weekly (5-day), monthly (22-day) aggregated returns
+- $(x)^+ = \max(0, x)$ and $(x)^- = \max(0, -x)$ = positive and negative components
+- **9 parameters per equation** (intercept + 6 return coefficients + 2 AR terms)
+
+The asymmetric slope structure allows positive and negative returns to have different impacts at each horizon, while the multi-horizon components capture long-memory effects in tail risk.
+
+### Estimation
+
+The model uses a three-stage procedure:
+1. **Stage 1**: CAViaR estimation for initial VaR
+2. **Stage 2**: ES residual estimation (r = ES - VaR) using Barrera loss
+3. **Stage 3**: Joint refinement with Fissler-Ziegel loss (penalty weights λ = 10)
+
+## Statistical Testing
+
+The package provides comprehensive backtesting tools for VaR and ES validation:
+
+### VaR Backtests
+- **Kupiec (1995)**: Unconditional coverage test (correct violation rate)
+- **Christoffersen (1998)**: Conditional coverage test (correct rate + independence of violations)
+
+### ES Backtests
+- **McNeil-Frey (2000)**: Bootstrap test for ES calibration using exceedance residuals
+- **Acerbi-Szekely (2014)**: Z1 and Z2 tests for ES specification
+
+### Forecast Comparison
+- **Diebold-Mariano**: HAC-robust test for predictive accuracy comparison
+- **Bootstrap loss differential**: One-sided test for forecast encompassing
+
+Example usage:
+```python
+from har_caesar.utils import christoffersen_cc_test
+
+# Compute violations
+violations = (y_test < var_forecasts).astype(int)
+
+# Run Christoffersen test
+results = christoffersen_cc_test(violations, theta=0.025)
+print(f"LR_CC: {results['LR_CC']:.2f}, p-value: {results['p_value_CC']:.4f}")
+```
 
 ## Installation
 
