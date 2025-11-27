@@ -115,11 +115,17 @@ print(f"Mean ES Forecast:  {np.mean(results['ef']):.4f}")
 
 ## Repository Structure
 
--   `src/har_caesar/`: Main package source code.
--   `experiments/`: Reproducible scripts for empirical analysis.
--   `tests/`: Unit tests for model verification.
--   `data/`: Input dataset location.
--   `output/`: Generated results and artifacts.
+-   `src/har_caesar/`: Main package source code
+    -   `models/`: Model implementations (HAR-CAESar, CAESar, CAViaR, GAS)
+    -   `utils.py`: Statistical testing and loss functions
+-   `experiments/`: Reproducible scripts for empirical analysis
+    -   `experiments_har_caesar.py`: Main comparative experiment
+    -   `generate_synthetic_data.py`: Synthetic data generation
+-   `tests/`: Unit tests for model verification
+-   `docs/`: Sphinx documentation (API reference, theory, examples)
+-   `memory-bank/`: Project context and development notes
+-   `data/`: Input dataset location
+-   `output/`: Generated results and artifacts
 
 ## License
 
