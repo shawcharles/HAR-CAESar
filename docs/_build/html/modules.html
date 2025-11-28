@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>caesarisk &mdash; HAR-CAESar 1.0.0 documentation</title>
+  <title>API Reference &mdash; HAR-CAESar 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -42,14 +42,17 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="theory.html">Theoretical Framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">caesarisk</a><ul>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="models.html">HAR-CAESar API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utility Functions</a></li>
 </ul>
 </li>
 </ul>
@@ -68,7 +71,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">caesarisk</li>
+      <li class="breadcrumb-item active">API Reference</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -78,8 +81,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="caesarisk">
-<h1>caesarisk<a class="headerlink" href="#caesarisk" title="Link to this heading"></a></h1>
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<p>This section provides detailed API documentation for all modules in the <code class="docutils literal notranslate"><span class="pre">har_caesar</span></code> package.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="models.html">HAR-CAESar API</a><ul>
@@ -181,53 +185,59 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">utils module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.AS14_test"><code class="docutils literal notranslate"><span class="pre">AS14_test</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.AS14_test.__call__"><code class="docutils literal notranslate"><span class="pre">AS14_test.__call__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.AS14_test.as14_transform"><code class="docutils literal notranslate"><span class="pre">AS14_test.as14_transform()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utility Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#loss-functions">Loss Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#statistical-tests">Statistical Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#module-har_caesar.utils">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.AS14_test"><code class="docutils literal notranslate"><span class="pre">AS14_test</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.AS14_test.__call__"><code class="docutils literal notranslate"><span class="pre">AS14_test.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.AS14_test.as14_transform"><code class="docutils literal notranslate"><span class="pre">AS14_test.as14_transform()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.DMtest"><code class="docutils literal notranslate"><span class="pre">DMtest</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.DMtest.__call__"><code class="docutils literal notranslate"><span class="pre">DMtest.__call__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.DMtest.autocovariance"><code class="docutils literal notranslate"><span class="pre">DMtest.autocovariance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.DMtest"><code class="docutils literal notranslate"><span class="pre">DMtest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.DMtest.__call__"><code class="docutils literal notranslate"><span class="pre">DMtest.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.DMtest.autocovariance"><code class="docutils literal notranslate"><span class="pre">DMtest.autocovariance()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.Encompassing_test"><code class="docutils literal notranslate"><span class="pre">Encompassing_test</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.Encompassing_test.__call__"><code class="docutils literal notranslate"><span class="pre">Encompassing_test.__call__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.Encompassing_test.en_transform"><code class="docutils literal notranslate"><span class="pre">Encompassing_test.en_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.Encompassing_test"><code class="docutils literal notranslate"><span class="pre">Encompassing_test</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.Encompassing_test.__call__"><code class="docutils literal notranslate"><span class="pre">Encompassing_test.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.Encompassing_test.en_transform"><code class="docutils literal notranslate"><span class="pre">Encompassing_test.en_transform()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.LossDiff_test"><code class="docutils literal notranslate"><span class="pre">LossDiff_test</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.LossDiff_test.__call__"><code class="docutils literal notranslate"><span class="pre">LossDiff_test.__call__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.LossDiff_test.ld_transform"><code class="docutils literal notranslate"><span class="pre">LossDiff_test.ld_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.LossDiff_test"><code class="docutils literal notranslate"><span class="pre">LossDiff_test</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.LossDiff_test.__call__"><code class="docutils literal notranslate"><span class="pre">LossDiff_test.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.LossDiff_test.ld_transform"><code class="docutils literal notranslate"><span class="pre">LossDiff_test.ld_transform()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.McneilFrey_test"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.McneilFrey_test.__call__"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test.__call__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.McneilFrey_test.mnf_transform"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test.mnf_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.McneilFrey_test"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.McneilFrey_test.__call__"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.McneilFrey_test.mnf_transform"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test.mnf_transform()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.PinballLoss"><code class="docutils literal notranslate"><span class="pre">PinballLoss</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.PinballLoss.__call__"><code class="docutils literal notranslate"><span class="pre">PinballLoss.__call__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.PinballLoss"><code class="docutils literal notranslate"><span class="pre">PinballLoss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.PinballLoss.__call__"><code class="docutils literal notranslate"><span class="pre">PinballLoss.__call__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.barrera_loss"><code class="docutils literal notranslate"><span class="pre">barrera_loss</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.barrera_loss.__call__"><code class="docutils literal notranslate"><span class="pre">barrera_loss.__call__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.barrera_loss"><code class="docutils literal notranslate"><span class="pre">barrera_loss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.barrera_loss.__call__"><code class="docutils literal notranslate"><span class="pre">barrera_loss.__call__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.bootstrap_mean_test"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.bootstrap_mean_test.__call__"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.__call__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.bootstrap_mean_test.null_statistic"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.null_statistic()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.bootstrap_mean_test.statistic"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.statistic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.bootstrap_mean_test"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.bootstrap_mean_test.__call__"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.bootstrap_mean_test.null_statistic"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.null_statistic()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.bootstrap_mean_test.statistic"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.statistic()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.cr_t_test"><code class="docutils literal notranslate"><span class="pre">cr_t_test()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.gaussian_tail_stats"><code class="docutils literal notranslate"><span class="pre">gaussian_tail_stats()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.patton_loss"><code class="docutils literal notranslate"><span class="pre">patton_loss</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.patton_loss.__call__"><code class="docutils literal notranslate"><span class="pre">patton_loss.__call__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.christoffersen_cc_test"><code class="docutils literal notranslate"><span class="pre">christoffersen_cc_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.cr_t_test"><code class="docutils literal notranslate"><span class="pre">cr_t_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.gaussian_tail_stats"><code class="docutils literal notranslate"><span class="pre">gaussian_tail_stats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.patton_loss"><code class="docutils literal notranslate"><span class="pre">patton_loss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils.html#har_caesar.utils.patton_loss.__call__"><code class="docutils literal notranslate"><span class="pre">patton_loss.__call__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#har_caesar.utils.tstudent_tail_stats"><code class="docutils literal notranslate"><span class="pre">tstudent_tail_stats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#har_caesar.utils.tstudent_tail_stats"><code class="docutils literal notranslate"><span class="pre">tstudent_tail_stats()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

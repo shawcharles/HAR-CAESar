@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>utils module &mdash; HAR-CAESar 1.0.0 documentation</title>
+  <title>Utility Functions &mdash; HAR-CAESar 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -41,60 +41,35 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="theory.html">Theoretical Framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">caesarisk</a><ul class="current">
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="models.html">HAR-CAESar API</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">utils module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.AS14_test"><code class="docutils literal notranslate"><span class="pre">AS14_test</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.AS14_test.__call__"><code class="docutils literal notranslate"><span class="pre">AS14_test.__call__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.AS14_test.as14_transform"><code class="docutils literal notranslate"><span class="pre">AS14_test.as14_transform()</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Utility Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#loss-functions">Loss Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#statistical-tests">Statistical Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-har_caesar.utils">API Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.AS14_test"><code class="docutils literal notranslate"><span class="pre">AS14_test</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.DMtest"><code class="docutils literal notranslate"><span class="pre">DMtest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.Encompassing_test"><code class="docutils literal notranslate"><span class="pre">Encompassing_test</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.LossDiff_test"><code class="docutils literal notranslate"><span class="pre">LossDiff_test</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.McneilFrey_test"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.PinballLoss"><code class="docutils literal notranslate"><span class="pre">PinballLoss</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.barrera_loss"><code class="docutils literal notranslate"><span class="pre">barrera_loss</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.bootstrap_mean_test"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.christoffersen_cc_test"><code class="docutils literal notranslate"><span class="pre">christoffersen_cc_test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.cr_t_test"><code class="docutils literal notranslate"><span class="pre">cr_t_test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.gaussian_tail_stats"><code class="docutils literal notranslate"><span class="pre">gaussian_tail_stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.patton_loss"><code class="docutils literal notranslate"><span class="pre">patton_loss</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.tstudent_tail_stats"><code class="docutils literal notranslate"><span class="pre">tstudent_tail_stats()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.DMtest"><code class="docutils literal notranslate"><span class="pre">DMtest</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.DMtest.__call__"><code class="docutils literal notranslate"><span class="pre">DMtest.__call__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.DMtest.autocovariance"><code class="docutils literal notranslate"><span class="pre">DMtest.autocovariance()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.Encompassing_test"><code class="docutils literal notranslate"><span class="pre">Encompassing_test</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.Encompassing_test.__call__"><code class="docutils literal notranslate"><span class="pre">Encompassing_test.__call__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.Encompassing_test.en_transform"><code class="docutils literal notranslate"><span class="pre">Encompassing_test.en_transform()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.LossDiff_test"><code class="docutils literal notranslate"><span class="pre">LossDiff_test</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.LossDiff_test.__call__"><code class="docutils literal notranslate"><span class="pre">LossDiff_test.__call__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.LossDiff_test.ld_transform"><code class="docutils literal notranslate"><span class="pre">LossDiff_test.ld_transform()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.McneilFrey_test"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.McneilFrey_test.__call__"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test.__call__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.McneilFrey_test.mnf_transform"><code class="docutils literal notranslate"><span class="pre">McneilFrey_test.mnf_transform()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.PinballLoss"><code class="docutils literal notranslate"><span class="pre">PinballLoss</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.PinballLoss.__call__"><code class="docutils literal notranslate"><span class="pre">PinballLoss.__call__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.barrera_loss"><code class="docutils literal notranslate"><span class="pre">barrera_loss</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.barrera_loss.__call__"><code class="docutils literal notranslate"><span class="pre">barrera_loss.__call__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.bootstrap_mean_test"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.bootstrap_mean_test.__call__"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.__call__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.bootstrap_mean_test.null_statistic"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.null_statistic()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.bootstrap_mean_test.statistic"><code class="docutils literal notranslate"><span class="pre">bootstrap_mean_test.statistic()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.cr_t_test"><code class="docutils literal notranslate"><span class="pre">cr_t_test()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.gaussian_tail_stats"><code class="docutils literal notranslate"><span class="pre">gaussian_tail_stats()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.patton_loss"><code class="docutils literal notranslate"><span class="pre">patton_loss</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#har_caesar.utils.patton_loss.__call__"><code class="docutils literal notranslate"><span class="pre">patton_loss.__call__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#har_caesar.utils.tstudent_tail_stats"><code class="docutils literal notranslate"><span class="pre">tstudent_tail_stats()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -115,8 +90,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">caesarisk</a></li>
-      <li class="breadcrumb-item active">utils module</li>
+          <li class="breadcrumb-item"><a href="modules.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Utility Functions</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -126,8 +101,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-har_caesar.utils">
-<span id="utils-module"></span><h1>utils module<a class="headerlink" href="#module-har_caesar.utils" title="Link to this heading"></a></h1>
+  <section id="utility-functions">
+<h1>Utility Functions<a class="headerlink" href="#utility-functions" title="Link to this heading"></a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">har_caesar.utils</span></code> module provides essential statistical testing and loss functions for model validation and comparison.</p>
+<section id="loss-functions">
+<h2>Loss Functions<a class="headerlink" href="#loss-functions" title="Link to this heading"></a></h2>
+<p>The module includes implementations of elicitable loss functions for VaR and ES:</p>
+<ul class="simple">
+<li><p><strong>Tick Loss:</strong> Quantile loss for VaR estimation</p></li>
+<li><p><strong>Barrera Loss:</strong> Loss function for ES residual estimation</p></li>
+<li><p><strong>Fissler-Ziegel Loss:</strong> Jointly consistent loss for (VaR, ES) pairs</p></li>
+</ul>
+</section>
+<section id="statistical-tests">
+<h2>Statistical Tests<a class="headerlink" href="#statistical-tests" title="Link to this heading"></a></h2>
+<p><strong>VaR Backtests:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">kupiec_test()</span></code>: Unconditional coverage test</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">christoffersen_cc_test()</span></code>: Conditional coverage test (UC + independence)</p></li>
+</ul>
+<p><strong>ES Backtests:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mcneil_frey_test()</span></code>: Bootstrap-based ES calibration test</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">acerbi_szekely_test()</span></code>: Z1 and Z2 tests for ES specification</p></li>
+</ul>
+<p><strong>Forecast Comparison:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">diebold_mariano_test()</span></code>: HAC-robust test for comparing forecast accuracy</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bootstrap_loss_test()</span></code>: One-sided test for forecast encompassing</p></li>
+</ul>
+</section>
+<section id="module-har_caesar.utils">
+<span id="api-documentation"></span><h2>API Documentation<a class="headerlink" href="#module-har_caesar.utils" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="har_caesar.utils.AS14_test">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">har_caesar.utils.</span></span><span class="sig-name descname"><span class="pre">AS14_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">one_side</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_boot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/har_caesar/utils.html#AS14_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#har_caesar.utils.AS14_test" title="Link to this definition"></a></dt>
@@ -710,6 +715,40 @@ INPUT:
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="har_caesar.utils.christoffersen_cc_test">
+<span class="sig-prename descclassname"><span class="pre">har_caesar.utils.</span></span><span class="sig-name descname"><span class="pre">christoffersen_cc_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">violations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/har_caesar/utils.html#christoffersen_cc_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#har_caesar.utils.christoffersen_cc_test" title="Link to this definition"></a></dt>
+<dd><p>Christoffersen (1998) conditional coverage test for VaR backtesting.</p>
+<p>Tests both unconditional coverage (correct violation rate) and independence
+(no clustering of violations). The test statistic is LR_CC = LR_UC + LR_IND,
+distributed as chi-squared with 2 degrees of freedom under the null.</p>
+<p>INPUT:
+- violations: numpy array,</p>
+<blockquote>
+<div><p>binary array where 1 indicates a VaR violation at time t</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>theta: float,</dt><dd><p>the nominal coverage level (e.g., 0.025 for 2.5% VaR)</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OUTPUT:
+- dict with keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘LR_UC’: float, unconditional coverage test statistic</p></li>
+<li><p>‘LR_IND’: float, independence test statistic</p></li>
+<li><p>‘LR_CC’: float, conditional coverage test statistic</p></li>
+<li><p>‘p_value_UC’: float, p-value for unconditional coverage</p></li>
+<li><p>‘p_value_IND’: float, p-value for independence</p></li>
+<li><p>‘p_value_CC’: float, p-value for conditional coverage</p></li>
+<li><p>‘violation_rate’: float, observed violation rate</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="har_caesar.utils.cr_t_test">
 <span class="sig-prename descclassname"><span class="pre">har_caesar.utils.</span></span><span class="sig-name descname"><span class="pre">cr_t_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errorsA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errorsB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_len</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_len</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/har_caesar/utils.html#cr_t_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#har_caesar.utils.cr_t_test" title="Link to this definition"></a></dt>
 <dd><p>Corrected resampled t-test for the equality of forecast accuracy.
@@ -858,6 +897,7 @@ INPUT:
 </ul>
 </dd></dl>
 
+</section>
 </section>
 
 

@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="caesarisk" href="modules.html" />
+    <link rel="next" title="API Reference" href="modules.html" />
     <link rel="prev" title="Theoretical Framework" href="theory.html" /> 
 </head>
 
@@ -42,16 +42,20 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="theory.html">Theoretical Framework</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backtesting-example">Backtesting Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#running-the-full-experiment">Running the Full Experiment</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">caesarisk</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -112,6 +116,45 @@
 </pre></div>
 </div>
 </section>
+<section id="backtesting-example">
+<h2>Backtesting Example<a class="headerlink" href="#backtesting-example" title="Link to this heading"></a></h2>
+<p>This example demonstrates how to validate VaR forecasts using the Christoffersen conditional coverage test:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">har_caesar</span><span class="w"> </span><span class="kn">import</span> <span class="n">HAR_CAESar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">har_caesar.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">christoffersen_cc_test</span>
+
+<span class="c1"># 1. Generate synthetic data</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="mf">0.025</span>  <span class="c1"># 2.5% VaR</span>
+
+<span class="c1"># 2. Fit model and generate forecasts</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">HAR_CAESar</span><span class="p">(</span><span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ti</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># 3. Get test period data</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1500</span><span class="p">:]</span>
+<span class="n">var_forecasts</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;qf&#39;</span><span class="p">]</span>
+
+<span class="c1"># 4. Compute violations (1 if return &lt; VaR, 0 otherwise)</span>
+<span class="n">violations</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_test</span> <span class="o">&lt;</span> <span class="n">var_forecasts</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="c1"># 5. Run Christoffersen test</span>
+<span class="n">test_results</span> <span class="o">=</span> <span class="n">christoffersen_cc_test</span><span class="p">(</span><span class="n">violations</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">)</span>
+
+<span class="c1"># 6. Interpret results</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Violation rate: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">violations</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (expected: </span><span class="si">{</span><span class="n">theta</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LR_UC: </span><span class="si">{</span><span class="n">test_results</span><span class="p">[</span><span class="s1">&#39;LR_UC&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, p-value: </span><span class="si">{</span><span class="n">test_results</span><span class="p">[</span><span class="s1">&#39;p_value_UC&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LR_IND: </span><span class="si">{</span><span class="n">test_results</span><span class="p">[</span><span class="s1">&#39;LR_IND&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, p-value: </span><span class="si">{</span><span class="n">test_results</span><span class="p">[</span><span class="s1">&#39;p_value_IND&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LR_CC: </span><span class="si">{</span><span class="n">test_results</span><span class="p">[</span><span class="s1">&#39;LR_CC&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, p-value: </span><span class="si">{</span><span class="n">test_results</span><span class="p">[</span><span class="s1">&#39;p_value_CC&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">test_results</span><span class="p">[</span><span class="s1">&#39;p_value_CC&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ Model passes Christoffersen test at 5</span><span class="si">% s</span><span class="s2">ignificance&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✗ Model fails Christoffersen test at 5</span><span class="si">% s</span><span class="s2">ignificance&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="running-the-full-experiment">
 <h2>Running the Full Experiment<a class="headerlink" href="#running-the-full-experiment" title="Link to this heading"></a></h2>
 <p>To reproduce the empirical results from the thesis (comparing against benchmarks on real market data), use the provided experiment script:</p>
@@ -130,7 +173,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="theory.html" class="btn btn-neutral float-left" title="Theoretical Framework" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="modules.html" class="btn btn-neutral float-right" title="caesarisk" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

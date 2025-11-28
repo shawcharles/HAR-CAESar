@@ -1038,20 +1038,25 @@ class CAViaR_2_1(CAViaR_base):
         return qf
 
 def CAViaR(theta, spec='AS', p=1, u=1):
-    '''
+    """
     CAViaR model selection.
-    INPUTS:
-        - theta: float
-            quantile level.
-        - spec: str, optional
-            specification of the model (SAV, AS, GARCH). Default is AS.
-        - p: int, optional
-            number of lags for the y variable. Default is 1.
-        - u: int, optional
-            number of lags for the quantile. Default is 1.
-    OUTPUTS:
-        - CAViaR model
-    '''
+
+    Parameters
+    ----------
+    theta : float
+        Quantile level.
+    spec : str, optional
+        Specification of the model (SAV, AS, GARCH). Default is 'AS'.
+    p : int, optional
+        Number of lags for the y variable. Default is 1.
+    u : int, optional
+        Number of lags for the quantile. Default is 1.
+
+    Returns
+    -------
+    CAViaR model
+        Selected CAViaR model instance.
+    """
     p, u = int(p), int(u) #Convert to integer
     # Ensure that p and r are greater than 0
     assert p > 0, 'p must be greater than 0'

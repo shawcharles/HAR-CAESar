@@ -19,8 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="utils module" href="utils.html" />
-    <link rel="prev" title="caesarisk" href="modules.html" /> 
+    <link rel="next" title="Utility Functions" href="utils.html" />
+    <link rel="prev" title="API Reference" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,12 +42,15 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="theory.html">Theoretical Framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">caesarisk</a><ul class="current">
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">HAR-CAESar API</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-har_caesar.models.har_caesar">Core models</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#har_caesar.models.har_caesar.HAR_CAESar"><code class="docutils literal notranslate"><span class="pre">HAR_CAESar</span></code></a></li>
@@ -64,7 +67,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utility Functions</a></li>
 </ul>
 </li>
 </ul>
@@ -83,7 +86,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">caesarisk</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">API Reference</a></li>
       <li class="breadcrumb-item active">HAR-CAESar API</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/models.rst.txt" rel="nofollow"> View page source</a>
@@ -2434,36 +2437,21 @@ with the last observation. Default is an empty list.</p>
 <dl class="py function" id="module-har_caesar.models.caviar">
 <dt class="sig sig-object py" id="har_caesar.models.caviar.CAViaR">
 <span class="sig-prename descclassname"><span class="pre">har_caesar.models.caviar.</span></span><span class="sig-name descname"><span class="pre">CAViaR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/har_caesar/models/caviar.html#CAViaR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#har_caesar.models.caviar.CAViaR" title="Link to this definition"></a></dt>
-<dd><p>CAViaR model selection.
-INPUTS:</p>
-<blockquote>
-<div><ul class="simple">
-<li><dl class="simple">
-<dt>theta: float</dt><dd><p>quantile level.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>spec: str, optional</dt><dd><p>specification of the model (SAV, AS, GARCH). Default is AS.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>p: int, optional</dt><dd><p>number of lags for the y variable. Default is 1.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>u: int, optional</dt><dd><p>number of lags for the quantile. Default is 1.</p>
-</dd>
-</dl>
-</li>
+<dd><p>CAViaR model selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>theta</strong> (<em>float</em>) – Quantile level.</p></li>
+<li><p><strong>spec</strong> (<em>str</em><em>, </em><em>optional</em>) – Specification of the model (SAV, AS, GARCH). Default is ‘AS’.</p></li>
+<li><p><strong>p</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of lags for the y variable. Default is 1.</p></li>
+<li><p><strong>u</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of lags for the quantile. Default is 1.</p></li>
 </ul>
-</div></blockquote>
-<dl class="simple">
-<dt>OUTPUTS:</dt><dd><ul class="simple">
-<li><p>CAViaR model</p></li>
-</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Selected CAViaR model instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>CAViaR model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3221,8 +3209,8 @@ INPUTS:</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="modules.html" class="btn btn-neutral float-left" title="caesarisk" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="utils.html" class="btn btn-neutral float-right" title="utils module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="modules.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="utils.html" class="btn btn-neutral float-right" title="Utility Functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

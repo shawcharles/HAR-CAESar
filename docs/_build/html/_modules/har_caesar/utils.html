@@ -39,12 +39,15 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../theory.html">Theoretical Framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">caesarisk</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -753,6 +756,129 @@
 </div>
 
     
+<div class="viewcode-block" id="christoffersen_cc_test">
+<a class="viewcode-back" href="../../utils.html#har_caesar.utils.christoffersen_cc_test">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">christoffersen_cc_test</span><span class="p">(</span><span class="n">violations</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Christoffersen (1998) conditional coverage test for VaR backtesting.</span>
+<span class="sd">    </span>
+<span class="sd">    Tests both unconditional coverage (correct violation rate) and independence</span>
+<span class="sd">    (no clustering of violations). The test statistic is LR_CC = LR_UC + LR_IND,</span>
+<span class="sd">    distributed as chi-squared with 2 degrees of freedom under the null.</span>
+<span class="sd">    </span>
+<span class="sd">    INPUT:</span>
+<span class="sd">    - violations: numpy array,</span>
+<span class="sd">        binary array where 1 indicates a VaR violation at time t</span>
+<span class="sd">    - theta: float,</span>
+<span class="sd">        the nominal coverage level (e.g., 0.025 for 2.5% VaR)</span>
+<span class="sd">    </span>
+<span class="sd">    OUTPUT:</span>
+<span class="sd">    - dict with keys:</span>
+<span class="sd">        - &#39;LR_UC&#39;: float, unconditional coverage test statistic</span>
+<span class="sd">        - &#39;LR_IND&#39;: float, independence test statistic</span>
+<span class="sd">        - &#39;LR_CC&#39;: float, conditional coverage test statistic</span>
+<span class="sd">        - &#39;p_value_UC&#39;: float, p-value for unconditional coverage</span>
+<span class="sd">        - &#39;p_value_IND&#39;: float, p-value for independence</span>
+<span class="sd">        - &#39;p_value_CC&#39;: float, p-value for conditional coverage</span>
+<span class="sd">        - &#39;violation_rate&#39;: float, observed violation rate</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">chi2</span>
+    
+    <span class="c1"># Flatten and convert to binary array</span>
+    <span class="n">violations</span> <span class="o">=</span> <span class="n">violations</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">violations</span><span class="p">)</span>
+    <span class="n">n_violations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">violations</span><span class="p">)</span>
+    <span class="n">violation_rate</span> <span class="o">=</span> <span class="n">n_violations</span> <span class="o">/</span> <span class="n">T</span>
+    
+    <span class="c1"># Unconditional Coverage Test (Kupiec 1995)</span>
+    <span class="k">if</span> <span class="n">n_violations</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">n_violations</span> <span class="o">==</span> <span class="n">T</span><span class="p">:</span>
+        <span class="c1"># Edge case: no violations or all violations</span>
+        <span class="n">LR_UC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">if</span> <span class="p">(</span><span class="n">n_violations</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">theta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n_violations</span> <span class="o">==</span> <span class="n">T</span> <span class="ow">and</span> <span class="n">theta</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">p_value_UC</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">LR_UC</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LR_UC</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">n_violations</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> 
+            <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="n">n_violations</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">theta</span><span class="p">)</span> <span class="o">-</span>
+            <span class="n">n_violations</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">violation_rate</span><span class="p">)</span> <span class="o">-</span> 
+            <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="n">n_violations</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">violation_rate</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">p_value_UC</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">chi2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">LR_UC</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># Independence Test (Christoffersen 1998)</span>
+    <span class="c1"># Count transitions: n_ij = number of times state i is followed by state j</span>
+    <span class="c1"># States: 0 = no violation, 1 = violation</span>
+    <span class="n">n_00</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">violations</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">violations</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">n_01</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">violations</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">violations</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">n_10</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">violations</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">violations</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">n_11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">violations</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">violations</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span>
+    
+    <span class="c1"># Transition probabilities</span>
+    <span class="c1"># pi_0 = P(violation at t | no violation at t-1)</span>
+    <span class="c1"># pi_1 = P(violation at t | violation at t-1)</span>
+    <span class="k">if</span> <span class="n">n_00</span> <span class="o">+</span> <span class="n">n_01</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">pi_0</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pi_0</span> <span class="o">=</span> <span class="n">n_01</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_00</span> <span class="o">+</span> <span class="n">n_01</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">n_10</span> <span class="o">+</span> <span class="n">n_11</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">pi_1</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pi_1</span> <span class="o">=</span> <span class="n">n_11</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_10</span> <span class="o">+</span> <span class="n">n_11</span><span class="p">)</span>
+    
+    <span class="c1"># Unconditional probability (pooled)</span>
+    <span class="n">pi</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_01</span> <span class="o">+</span> <span class="n">n_11</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># Likelihood ratio test for independence</span>
+    <span class="c1"># H0: pi_0 = pi_1 (violations are independent)</span>
+    <span class="c1"># H1: pi_0 ≠ pi_1 (violations are clustered)</span>
+    
+    <span class="k">if</span> <span class="n">pi_0</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pi_1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># No violations in the sequence</span>
+        <span class="n">LR_IND</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">p_value_IND</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">pi</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">pi</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># All same state</span>
+        <span class="n">LR_IND</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">p_value_IND</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Compute log-likelihood under H0 (independence)</span>
+        <span class="n">LL_H0</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_00</span> <span class="o">+</span> <span class="n">n_10</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">n_01</span> <span class="o">+</span> <span class="n">n_11</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+        
+        <span class="c1"># Compute log-likelihood under H1 (dependence)</span>
+        <span class="n">LL_H1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">pi_0</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pi_0</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">LL_H1</span> <span class="o">+=</span> <span class="n">n_00</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pi_0</span><span class="p">)</span> <span class="o">+</span> <span class="n">n_01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pi_0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">pi_0</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">LL_H1</span> <span class="o">+=</span> <span class="n">n_00</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">1e-10</span><span class="p">)</span>  <span class="c1"># Avoid log(0)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pi_0 == 1</span>
+            <span class="n">LL_H1</span> <span class="o">+=</span> <span class="n">n_01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">1e-10</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">pi_1</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pi_1</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">LL_H1</span> <span class="o">+=</span> <span class="n">n_10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pi_1</span><span class="p">)</span> <span class="o">+</span> <span class="n">n_11</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pi_1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">pi_1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">LL_H1</span> <span class="o">+=</span> <span class="n">n_10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">1e-10</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pi_1 == 1</span>
+            <span class="n">LL_H1</span> <span class="o">+=</span> <span class="n">n_11</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">1e-10</span><span class="p">)</span>
+        
+        <span class="n">LR_IND</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">LL_H0</span> <span class="o">-</span> <span class="n">LL_H1</span><span class="p">)</span>
+        <span class="n">p_value_IND</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">chi2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">LR_IND</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># Conditional Coverage Test</span>
+    <span class="n">LR_CC</span> <span class="o">=</span> <span class="n">LR_UC</span> <span class="o">+</span> <span class="n">LR_IND</span>
+    <span class="n">p_value_CC</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">chi2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">LR_CC</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;LR_UC&#39;</span><span class="p">:</span> <span class="n">LR_UC</span><span class="p">,</span>
+        <span class="s1">&#39;LR_IND&#39;</span><span class="p">:</span> <span class="n">LR_IND</span><span class="p">,</span>
+        <span class="s1">&#39;LR_CC&#39;</span><span class="p">:</span> <span class="n">LR_CC</span><span class="p">,</span>
+        <span class="s1">&#39;p_value_UC&#39;</span><span class="p">:</span> <span class="n">p_value_UC</span><span class="p">,</span>
+        <span class="s1">&#39;p_value_IND&#39;</span><span class="p">:</span> <span class="n">p_value_IND</span><span class="p">,</span>
+        <span class="s1">&#39;p_value_CC&#39;</span><span class="p">:</span> <span class="n">p_value_CC</span><span class="p">,</span>
+        <span class="s1">&#39;violation_rate&#39;</span><span class="p">:</span> <span class="n">violation_rate</span><span class="p">,</span>
+        <span class="s1">&#39;n_violations&#39;</span><span class="p">:</span> <span class="n">n_violations</span>
+    <span class="p">}</span></div>
+
+
 <div class="viewcode-block" id="gaussian_tail_stats">
 <a class="viewcode-back" href="../../utils.html#har_caesar.utils.gaussian_tail_stats">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">gaussian_tail_stats</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>

@@ -43,20 +43,23 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Theoretical Framework</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#the-har-caesar-model">The HAR-CAESar Model</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#specification">Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#asymmetric-slope">Asymmetric Slope</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#estimation-strategy">Estimation Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backtesting">Backtesting</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">caesarisk</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -91,35 +94,61 @@
 <p>The core innovation is the modification of the autoregressive dynamics to condition on returns aggregated over different time horizons, inspired by the Heterogeneous Market Hypothesis (Muller et al., 1997).</p>
 <section id="specification">
 <h3>Specification<a class="headerlink" href="#specification" title="Link to this heading"></a></h3>
-<p>The joint dynamics for Value at Risk ($Q_t$) and Expected Shortfall ($ES_t$) at probability level $theta$ are given by:</p>
+<p>The joint dynamics for Value at Risk ($Q_t$) and Expected Shortfall ($ES_t$) at probability level $theta$ use an <strong>Asymmetric Slope (AS)</strong> structure at all horizons to capture leverage effects:</p>
+<p><strong>VaR Equation:</strong></p>
 <div class="math notranslate nohighlight">
-\[\begin{split}Q_t &amp;= \beta_0 + \beta_d r_{t-1}^{(d)} + \beta_w r_{t-1}^{(w)} + \beta_m r_{t-1}^{(m)} + \beta_q Q_{t-1} + \beta_e ES_{t-1} \\
-ES_t &amp;= \gamma_0 + \gamma_d r_{t-1}^{(d)} + \gamma_w r_{t-1}^{(w)} + \gamma_m r_{t-1}^{(m)} + \gamma_q Q_{t-1} + \gamma_e ES_{t-1}\end{split}\]</div>
-<p>Where the heterogeneous return components are defined as:</p>
+\[Q_t = \beta_0 + \beta_1^{(d)} (r_{t-1}^{(d)})^+ + \beta_2^{(d)} (r_{t-1}^{(d)})^- + \beta_1^{(w)} (r_{t-1}^{(w)})^+ + \beta_2^{(w)} (r_{t-1}^{(w)})^- + \beta_1^{(m)} (r_{t-1}^{(m)})^+ + \beta_2^{(m)} (r_{t-1}^{(m)})^- + \beta_3 Q_{t-1} + \beta_4 ES_{t-1}\]</div>
+<p><strong>ES Equation:</strong></p>
+<div class="math notranslate nohighlight">
+\[ES_t = \gamma_0 + \gamma_1^{(d)} (r_{t-1}^{(d)})^+ + \gamma_2^{(d)} (r_{t-1}^{(d)})^- + \gamma_1^{(w)} (r_{t-1}^{(w)})^+ + \gamma_2^{(w)} (r_{t-1}^{(w)})^- + \gamma_1^{(m)} (r_{t-1}^{(m)})^+ + \gamma_2^{(m)} (r_{t-1}^{(m)})^- + \gamma_3 Q_{t-1} + \gamma_4 ES_{t-1}\]</div>
+<p>Where:</p>
 <ul class="simple">
 <li><p><strong>Daily:</strong> $r_{t-1}^{(d)} = r_{t-1}$</p></li>
 <li><p><strong>Weekly:</strong> $r_{t-1}^{(w)} = frac{1}{5} sum_{j=1}^{5} r_{t-j}$</p></li>
 <li><p><strong>Monthly:</strong> $r_{t-1}^{(m)} = frac{1}{22} sum_{j=1}^{22} r_{t-j}$</p></li>
+<li><p><strong>Positive/Negative:</strong> $(x)^+ = max(0, x)$ and $(x)^- = max(0, -x)$</p></li>
 </ul>
-</section>
-<section id="asymmetric-slope">
-<h3>Asymmetric Slope<a class="headerlink" href="#asymmetric-slope" title="Link to this heading"></a></h3>
-<p>To capture leverage effects (where negative returns have a stronger impact on volatility), the model supports an <strong>Asymmetric Slope (AS)</strong> specification. Each return component is split into positive and negative parts:</p>
-<div class="math notranslate nohighlight">
-\[\beta_h r_{t-1}^{(h)} \rightarrow \beta_h^+ (r_{t-1}^{(h)})^+ + \beta_h^- (r_{t-1}^{(h)})^-\]</div>
+<p>This specification has <strong>9 parameters per equation</strong> (intercept + 6 return coefficients + 2 autoregressive terms), allowing positive and negative returns to have different impacts at each horizon.</p>
 </section>
 </section>
 <section id="estimation-strategy">
 <h2>Estimation Strategy<a class="headerlink" href="#estimation-strategy" title="Link to this heading"></a></h2>
-<p>The model is estimated using a multi-stage approach to ensure stability and consistency:</p>
-<ol class="arabic simple">
-<li><p><strong>VaR Initialization:</strong> Estimate Quantile Regression parameters using the Tick Loss.</p></li>
-<li><p><strong>ES Initialization:</strong> Estimate Expected Shortfall parameters conditional on VaR.</p></li>
-<li><p><strong>Joint Optimization:</strong> Re-estimate all parameters simultaneously by minimizing the joint <strong>Fissler-Ziegel Loss</strong> function:</p></li>
-</ol>
+<p>The model is estimated using a three-stage approach to ensure stability and consistency:</p>
+<p><strong>Stage 1: VaR Initialization</strong></p>
+<p>Estimate VaR parameters using CAViaR with the Tick (quantile) Loss:</p>
+<div class="math notranslate nohighlight">
+\[L_{tick}(r_t, Q_t) = (r_t - Q_t)(\theta - \mathbf{1}_{\{r_t &lt; Q_t\}})\]</div>
+<p><strong>Stage 2: ES Residual Estimation</strong></p>
+<p>Rather than estimating ES directly, Stage 2 estimates the <strong>ES residual</strong> $r_t = ES_t - Q_t$ using the Barrera loss function. This reparametrisation ensures monotonicity ($ES_t le Q_t &lt; 0$) since $r_t &lt; 0$.</p>
+<p><strong>Stage 3: Joint Refinement</strong></p>
+<p>Re-estimate all parameters simultaneously by minimizing the joint <strong>Fissler-Ziegel Loss</strong> function:</p>
 <div class="math notranslate nohighlight">
 \[L_{FZ}(r_t, Q_t, ES_t) = \frac{1}{T} \sum_{t=1}^T \left[ \frac{1}{\theta ES_t} (r_t - Q_t) \mathbf{1}_{\{r_t \le Q_t\}} + \frac{Q_t}{ES_t} + \log(-ES_t) - 1 \right]\]</div>
-<p>Constraints are applied to ensure monotonicity ($ES_t le Q_t$).</p>
+<p><strong>Implementation Details:</strong></p>
+<ul class="simple">
+<li><p>Penalty weights: $lambda_q = lambda_e = 10$ enforce the monotonicity constraint $ES_t le Q_t$</p></li>
+<li><p>Multiple random initializations ensure global convergence</p></li>
+<li><p>Convergence verified using gradient tolerance and loss function stability</p></li>
+</ul>
+</section>
+<section id="backtesting">
+<h2>Backtesting<a class="headerlink" href="#backtesting" title="Link to this heading"></a></h2>
+<p>The implementation provides comprehensive backtesting tools:</p>
+<p><strong>VaR Backtests:</strong></p>
+<ul class="simple">
+<li><p><strong>Kupiec (1995):</strong> Unconditional coverage test for correct violation rate</p></li>
+<li><p><strong>Christoffersen (1998):</strong> Conditional coverage test combining correct rate and independence</p></li>
+</ul>
+<p><strong>ES Backtests:</strong></p>
+<ul class="simple">
+<li><p><strong>McNeil-Frey (2000):</strong> Bootstrap test for ES calibration using exceedance residuals</p></li>
+<li><p><strong>Acerbi-Szekely (2014):</strong> Z1 and Z2 tests for ES specification</p></li>
+</ul>
+<p><strong>Forecast Comparison:</strong></p>
+<ul class="simple">
+<li><p><strong>Diebold-Mariano:</strong> HAC-robust test for predictive accuracy comparison</p></li>
+<li><p><strong>Bootstrap loss differential:</strong> One-sided test for forecast encompassing</p></li>
+</ul>
 </section>
 </section>
 

@@ -41,12 +41,15 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="theory.html">Theoretical Framework</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">caesarisk</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -76,9 +79,46 @@
   <section id="har-caesar-documentation">
 <h1>HAR-CAESar Documentation<a class="headerlink" href="#har-caesar-documentation" title="Link to this heading"></a></h1>
 <p><strong>HAR-CAESar</strong> (Heterogeneous Autoregressive Conditional Autoregressive Expected Shortfall) is a Python framework for forecasting joint <strong>Value at Risk (VaR)</strong> and <strong>Expected Shortfall (ES)</strong>.</p>
-<p>This library implements the models developed for the MSc Thesis: <em>“Forecasting Tail Risk with Long-Memory: A Heterogeneous Extension of the CAESar Model”</em>.</p>
+<p>This library implements the models developed for the MSc Thesis: <em>“Forecasting Tail Risk with Long-Memory: A Heterogeneous Extension of the CAESar Model”</em>. _.</p>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Long-Memory Modeling</strong>: Captures volatility cascades using HAR dynamics at daily, weekly, and monthly horizons</p></li>
+<li><p><strong>Asymmetric Slope Effects</strong>: Separates positive and negative return impacts to capture leverage effects</p></li>
+<li><p><strong>Joint Estimation</strong>: Simultaneous VaR and ES forecasting using the Fissler-Ziegel loss function</p></li>
+<li><p><strong>Comprehensive Backtesting</strong>: Implements Kupiec, Christoffersen, McNeil-Frey, and Acerbi-Szekely tests</p></li>
+<li><p><strong>Benchmarks</strong>: Includes CAESar, CAViaR, GAS1, and GAS2 implementations for comparison</p></li>
+</ul>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<p>Install the package:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/shawcharles/HAR-CAESar.git
+<span class="nb">cd</span><span class="w"> </span>HAR-CAESar
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+<p>Basic usage example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">har_caesar</span><span class="w"> </span><span class="kn">import</span> <span class="n">HAR_CAESar</span>
+
+<span class="c1"># Generate data</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+
+<span class="c1"># Fit model and predict</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">HAR_CAESar</span><span class="p">(</span><span class="n">theta</span><span class="o">=</span><span class="mf">0.025</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ti</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Access forecasts</span>
+<span class="n">var_forecasts</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;qf&#39;</span><span class="p">]</span>
+<span class="n">es_forecasts</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;ef&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="documentation-contents">
+<h2>Documentation Contents<a class="headerlink" href="#documentation-contents" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#prerequisites">Prerequisites</a></li>
@@ -88,20 +128,28 @@
 <li class="toctree-l1"><a class="reference internal" href="theory.html">Theoretical Framework</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="theory.html#the-har-caesar-model">The HAR-CAESar Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="theory.html#estimation-strategy">Estimation Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory.html#backtesting">Backtesting</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="examples.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#backtesting-example">Backtesting Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples.html#running-the-full-experiment">Running the Full Experiment</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">caesarisk</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="models.html">HAR-CAESar API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
 </ul>
 </li>
 </ul>
 </div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models.html">HAR-CAESar API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utility Functions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
