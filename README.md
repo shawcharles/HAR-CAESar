@@ -123,7 +123,6 @@ print(f"Mean ES Forecast:  {np.mean(results['ef']):.4f}")
     -   `generate_synthetic_data.py`: Synthetic data generation
 -   `tests/`: Unit tests for model verification
 -   `docs/`: Sphinx documentation (API reference, theory, examples)
--   `memory-bank/`: Project context and development notes
 -   `data/`: Input dataset location
 -   `output/`: Generated results and artifacts
 
