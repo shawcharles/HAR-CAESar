@@ -28,6 +28,7 @@ from har_caesar.models.caesar import CAESar
 from har_caesar.models.har_caesar import HAR_CAESar
 from har_caesar.models.caviar import CAViaR
 from har_caesar.models.gas import GAS1, GAS2
+from har_caesar.utils import christoffersen_cc_test, AS14_test, DMtest, patton_loss
 
 # Configuration
 OUTPUT_PATH = 'output/har_experiment'
@@ -80,30 +81,12 @@ def compute_violation_rate(y, q):
     violations = np.sum(y < q)
     return violations / len(y)
 
-def kupiec_test(y, q, theta):
-    """Kupiec unconditional coverage test."""
-    n = len(y)
-    violations = np.sum(y < q)
-    pi_hat = violations / n
-    
-    if violations == 0 or violations == n:
-        return np.nan, np.nan
-    
-    # Log-likelihood ratio
-    lr = -2 * (np.log(theta**violations * (1-theta)**(n-violations)) -
-               np.log(pi_hat**violations * (1-pi_hat)**(n-violations)))
-    
-    # P-value (chi-squared with 1 df)
-    from scipy.stats import chi2
-    p_value = 1 - chi2.cdf(lr, 1)
-    
-    return lr, p_value
-
 def fissler_ziegel_loss(y, q, e, theta):
     """Compute mean Fissler-Ziegel loss."""
     # Ensure e is negative (ES convention)
-    loss = np.where(y <= q, (y - q) / (theta * e), 0) + q / e + np.log(-e)
-    return np.mean(loss)
+    # Use patton_loss from utils which handles NaNs and structure
+    pl = patton_loss(theta, ret_mean=True)
+    return pl(q, e, y)
 
 def tick_loss(y, q, theta):
     """Compute mean tick (quantile) loss."""
@@ -136,9 +119,8 @@ def run_experiment(theta):
     # Rolling window experiment
     n_windows = (len(df_returns) - TRAIN_WINDOW - TEST_WINDOW) // STEP_SIZE + 1
     
-    # NOTE: The min(n_windows, 10) cap is for development/testing only.
-    # For full experiments reported in thesis, remove the cap: range(n_windows)
-    for window_idx in tqdm(range(min(n_windows, 10)), desc=f"Windows (theta={theta})"):
+    # Use full range of windows
+    for window_idx in tqdm(range(n_windows), desc=f"Windows (theta={theta})"):
         start_idx = window_idx * STEP_SIZE
         train_end = start_idx + TRAIN_WINDOW
         test_end = train_end + TEST_WINDOW
@@ -156,7 +138,7 @@ def run_experiment(theta):
         
         # Run on each asset
         for asset in df_returns.columns:
-            print(f"\n  Window {window_idx}, Asset: {asset}")
+            # print(f"\n  Window {window_idx}, Asset: {asset}")
             
             # Get data
             y_full = df_returns[asset].values[start_idx:test_end]
@@ -168,7 +150,7 @@ def run_experiment(theta):
             
             # --- CAViaR ---
             try:
-                print(f"    Running CAViaR...")
+                # print(f"    Running CAViaR...")
                 start_time = time.time()
                 mdl = CAViaR(theta, 'AS', p=1, u=1)
                 res = mdl.fit_predict(y_full, TRAIN_WINDOW, seed=SEED, return_train=False)
@@ -177,13 +159,13 @@ def run_experiment(theta):
                 results['models']['CAViaR']['times'].append((asset, window_idx, elapsed))
                 results['models']['CAViaR']['qf'].append((asset, window_idx, res['qf']))
                 results['models']['CAViaR']['ef'].append((asset, window_idx, None))
-                print(f"      Done in {elapsed:.1f}s")
+                # print(f"      Done in {elapsed:.1f}s")
             except Exception as e:
                 print(f"      CAViaR failed: {e}")
             
             # --- CAESar ---
             try:
-                print(f"    Running CAESar...")
+                # print(f"    Running CAESar...")
                 start_time = time.time()
                 mdl = CAESar(theta, 'AS')
                 res = mdl.fit_predict(y_full, TRAIN_WINDOW, seed=SEED, return_train=False)
@@ -192,13 +174,13 @@ def run_experiment(theta):
                 results['models']['CAESar']['times'].append((asset, window_idx, elapsed))
                 results['models']['CAESar']['qf'].append((asset, window_idx, res['qf']))
                 results['models']['CAESar']['ef'].append((asset, window_idx, res['ef']))
-                print(f"      Done in {elapsed:.1f}s")
+                # print(f"      Done in {elapsed:.1f}s")
             except Exception as e:
                 print(f"      CAESar failed: {e}")
             
             # --- HAR-CAESar ---
             try:
-                print(f"    Running HAR-CAESar...")
+                # print(f"    Running HAR-CAESar...")
                 start_time = time.time()
                 mdl = HAR_CAESar(theta)
                 res = mdl.fit_predict(y_full, TRAIN_WINDOW, seed=SEED, return_train=False)
@@ -207,13 +189,13 @@ def run_experiment(theta):
                 results['models']['HAR_CAESar']['times'].append((asset, window_idx, elapsed))
                 results['models']['HAR_CAESar']['qf'].append((asset, window_idx, res['qf']))
                 results['models']['HAR_CAESar']['ef'].append((asset, window_idx, res['ef']))
-                print(f"      Done in {elapsed:.1f}s")
+                # print(f"      Done in {elapsed:.1f}s")
             except Exception as e:
                 print(f"      HAR-CAESar failed: {e}")
             
             # --- GAS1 ---
             try:
-                print(f"    Running GAS1...")
+                # print(f"    Running GAS1...")
                 start_time = time.time()
                 mdl = GAS1(theta)
                 res = mdl.fit_predict(y_full, TRAIN_WINDOW, seed=SEED)
@@ -222,13 +204,13 @@ def run_experiment(theta):
                 results['models']['GAS1']['times'].append((asset, window_idx, elapsed))
                 results['models']['GAS1']['qf'].append((asset, window_idx, res['qf']))
                 results['models']['GAS1']['ef'].append((asset, window_idx, res['ef']))
-                print(f"      Done in {elapsed:.1f}s")
+                # print(f"      Done in {elapsed:.1f}s")
             except Exception as e:
                 print(f"      GAS1 failed: {e}")
             
             # --- GAS2 ---
             try:
-                print(f"    Running GAS2...")
+                # print(f"    Running GAS2...")
                 start_time = time.time()
                 mdl = GAS2(theta)
                 res = mdl.fit_predict(y_full, TRAIN_WINDOW, seed=SEED)
@@ -237,7 +219,7 @@ def run_experiment(theta):
                 results['models']['GAS2']['times'].append((asset, window_idx, elapsed))
                 results['models']['GAS2']['qf'].append((asset, window_idx, res['qf']))
                 results['models']['GAS2']['ef'].append((asset, window_idx, res['ef']))
-                print(f"      Done in {elapsed:.1f}s")
+                # print(f"      Done in {elapsed:.1f}s")
             except Exception as e:
                 print(f"      GAS2 failed: {e}")
         
@@ -245,7 +227,7 @@ def run_experiment(theta):
         save_path = f'{OUTPUT_PATH}/results_theta{str(theta).replace(".", "")}.pickle'
         with open(save_path, 'wb') as f:
             pickle.dump(results, f)
-        print(f"\n  Saved intermediate results to {save_path}")
+        # print(f"\n  Saved intermediate results to {save_path}")
     
     return results
 
@@ -259,6 +241,9 @@ def compute_summary(results):
         'models': {}
     }
     
+    # Initialize aggregated arrays
+    agg_data = {m: {'q': [], 'e': [], 'y': []} for m in MODELS}
+    
     for model_name in MODELS:
         model_data = results['models'][model_name]
         
@@ -270,6 +255,11 @@ def compute_summary(results):
         all_fz_loss = []
         all_tick_loss = []
         all_times = []
+        all_p_uc = []
+        all_p_cc = []
+        all_p_acerbi = []
+        
+        acerbi_tester = AS14_test(one_side=True, n_boot=1000)
         
         for i, (asset, window_idx, qf) in enumerate(model_data['qf']):
             # Get corresponding true values
@@ -282,20 +272,49 @@ def compute_summary(results):
             if y_true is None or len(qf) != len(y_true):
                 continue
             
+            # Flatten arrays
+            qf = qf.flatten()
+            y_true = y_true.flatten()
+            
+            # Store for DM test
+            agg_data[model_name]['q'].extend(qf)
+            agg_data[model_name]['y'].extend(y_true)
+            
             # Violation rate
             vr = compute_violation_rate(y_true, qf)
             all_violations.append(vr)
+            
+            # Christoffersen Test
+            violations = (y_true < qf).astype(int)
+            cc_res = christoffersen_cc_test(violations, theta)
+            all_p_uc.append(cc_res['p_value_UC'])
+            all_p_cc.append(cc_res['p_value_CC'])
             
             # Tick loss
             tl = tick_loss(y_true, qf, theta)
             all_tick_loss.append(tl)
             
-            # FZ loss (if ES available)
+            # FZ loss & ES tests (if ES available)
             if model_data['ef'][i][2] is not None:
-                ef = model_data['ef'][i][2]
+                ef = model_data['ef'][i][2].flatten()
+                
+                agg_data[model_name]['e'].extend(ef)
+                
                 if len(ef) == len(y_true):
+                    # FZ Loss
                     fz = fissler_ziegel_loss(y_true, qf, ef, theta)
                     all_fz_loss.append(fz)
+                    
+                    # Acerbi-Szekely Test (Z2)
+                    # Note: computationally expensive, using smaller n_boot or skipping if too slow
+                    # Here using 1000 boots
+                    try:
+                        as_res = acerbi_tester(qf, ef, y_true, theta, test_type='Z2')
+                        all_p_acerbi.append(as_res['p_value'])
+                    except:
+                        all_p_acerbi.append(np.nan)
+            else:
+                agg_data[model_name]['e'].extend([np.nan]*len(y_true))
             
             # Time
             for a, w, t in model_data['times']:
@@ -305,15 +324,42 @@ def compute_summary(results):
         
         summary['models'][model_name] = {
             'violation_rate_mean': np.mean(all_violations) if all_violations else np.nan,
-            'violation_rate_std': np.std(all_violations) if all_violations else np.nan,
             'tick_loss_mean': np.mean(all_tick_loss) if all_tick_loss else np.nan,
-            'tick_loss_std': np.std(all_tick_loss) if all_tick_loss else np.nan,
             'fz_loss_mean': np.mean(all_fz_loss) if all_fz_loss else np.nan,
-            'fz_loss_std': np.std(all_fz_loss) if all_fz_loss else np.nan,
             'time_mean': np.mean(all_times) if all_times else np.nan,
+            'p_uc_mean': np.mean(all_p_uc) if all_p_uc else np.nan,
+            'p_cc_mean': np.mean(all_p_cc) if all_p_cc else np.nan,
+            'p_acerbi_mean': np.mean(all_p_acerbi) if all_p_acerbi else np.nan,
             'n_experiments': len(all_violations)
         }
     
+    # Compute DM Tests
+    dm_results = {}
+    fz_loss_func = patton_loss(theta, ret_mean=False)
+    dm_tester = DMtest(fz_loss_func, h=1)
+    
+    base_model = 'CAESar'
+    if base_model in agg_data and len(agg_data[base_model]['q']) > 0:
+        Q_base = np.array(agg_data[base_model]['q'])
+        E_base = np.array(agg_data[base_model]['e'])
+        Y_all = np.array(agg_data[base_model]['y'])
+        
+        for model_name in MODELS:
+            if model_name == base_model or len(agg_data[model_name]['q']) == 0:
+                continue
+            
+            # Check if ES is available
+            if np.isnan(agg_data[model_name]['e']).all():
+                continue
+                
+            Q_curr = np.array(agg_data[model_name]['q'])
+            E_curr = np.array(agg_data[model_name]['e'])
+            
+            res = dm_tester(Q_curr, E_curr, Q_base, E_base, Y_all)
+            dm_results[f'{model_name}_vs_{base_model}'] = res
+            
+    summary['dm_tests'] = dm_results
+            
     return summary
 
 #%% Main Execution

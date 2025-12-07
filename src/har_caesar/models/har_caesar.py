@@ -43,25 +43,25 @@ def compute_har_features(returns, weekly_window=5, monthly_window=22):
     daily[1:] = returns[:-1]
     daily[0] = returns[0]  # Use first return as initial value
     
-    # Weekly: rolling 5-day average of lagged returns
+    # Weekly: rolling 5-day average of absolute lagged returns
     weekly = np.zeros(T)
     for t in range(T):
         if t == 0:
-            weekly[t] = returns[0]
+            weekly[t] = np.abs(returns[0])
         elif t < weekly_window:
-            weekly[t] = np.mean(returns[:t])
+            weekly[t] = np.mean(np.abs(returns[:t]))
         else:
-            weekly[t] = np.mean(returns[t-weekly_window:t])
+            weekly[t] = np.mean(np.abs(returns[t-weekly_window:t]))
     
-    # Monthly: rolling 22-day average of lagged returns
+    # Monthly: rolling 22-day average of absolute lagged returns
     monthly = np.zeros(T)
     for t in range(T):
         if t == 0:
-            monthly[t] = returns[0]
+            monthly[t] = np.abs(returns[0])
         elif t < monthly_window:
-            monthly[t] = np.mean(returns[:t])
+            monthly[t] = np.mean(np.abs(returns[:t]))
         else:
-            monthly[t] = np.mean(returns[t-monthly_window:t])
+            monthly[t] = np.mean(np.abs(returns[t-monthly_window:t]))
     
     return {'daily': daily, 'weekly': weekly, 'monthly': monthly}
 
