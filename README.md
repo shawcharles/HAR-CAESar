@@ -11,6 +11,7 @@ Developed for the MSc Thesis **"Forecasting Tail Risk with Long-Memory"**, this 
 ## Key Features
 
 -   **Long-Memory Modeling**. Captures volatility cascades using HAR dynamics (Corsi, 2009).
+-   **Crisis Resilience**. Acts as an "automatic stabilizer" by maintaining higher capital buffers during prolonged stress events (e.g., asset bubbles).
 -   **Asymmetric Slope Effects**. Separates positive and negative return impacts at daily, weekly, and monthly horizons.
 -   **Joint Estimation**. Simultaneous VaR and ES estimation using the Fissler-Ziegel consistent loss function.
 -   **Robust Estimation**. Three-stage procedure with multiple random initializations and convergence verification.
@@ -32,18 +33,28 @@ The HAR-CAESar model extends CAESar with heterogeneous autoregressive dynamics, 
 ```
 
 Where:
-- $r^{(d)}$, $r^{(w)}$, $r^{(m)}$ = daily, weekly (5-day), monthly (22-day) aggregated returns
+- $r^{(d)}$ = daily signed return
+- $r^{(w)}$, $r^{(m)}$ = weekly (5-day) and monthly (22-day) average **absolute** returns (volatility proxies)
 - $(x)^+ = \max(0, x)$ and $(x)^- = \max(0, -x)$ = positive and negative components
 - **9 parameters per equation** (intercept + 6 return coefficients + 2 AR terms)
 
-The asymmetric slope structure allows positive and negative returns to have different impacts at each horizon, while the multi-horizon components capture long-memory effects in tail risk.
+The use of absolute returns at weekly and monthly horizons allows the model to capture the persistence of volatility (long memory) which is crucial for tail risk forecasting during prolonged stress periods.
 
 ### Estimation
 
 The model uses a three-stage procedure:
-1. **Stage 1**: CAViaR estimation for initial VaR
-2. **Stage 2**: ES residual estimation (r = ES - VaR) using Barrera loss
-3. **Stage 3**: Joint refinement with Fissler-Ziegel loss (penalty weights λ = 10)
+1. **Stage 1**: CAViaR estimation for initial VaR (ensures stability).
+2. **Stage 2**: ES residual estimation (r = ES - VaR) using Barrera loss.
+3. **Stage 3**: Joint refinement with Fissler-Ziegel loss (penalty weights λ = 10).
+
+## Key Empirical Findings
+
+Extensive backtesting on S&P 500, FTSE 100, Nikkei 225, and MSCI EM (2000-2023) reveals:
+
+1.  **Comparability at 2.5%**: HAR-CAESar performs statistically identically to the simpler CAESar baseline at the standard 97.5% regulatory level.
+2.  **Improvement at 1%**: HAR-CAESar delivers marginally superior forecasts at the extreme 99% level (lower Fissler-Ziegel loss).
+3.  **Crisis Specialist**: During the COVID-19 crash (March 2020), HAR-CAESar provided a significantly larger capital buffer (-18.35% ES vs -13.32% for CAESar), demonstrating its value as an "insurance premium" against systemic shocks.
+4.  **Stability**: Unlike GAS models which failed due to optimization instability, HAR-CAESar converged reliably across all test windows.
 
 ## Statistical Testing
 
